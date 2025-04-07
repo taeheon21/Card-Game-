@@ -2,12 +2,7 @@ import random
 
 class Game:
     def __init__(self):
-        self.deck = Deck()
-        self.number_cards = []
-        self.figure_cards = []
-        self.split_deck()
-        self.players = [Player("Player 1"), Player("Player 2")]
-        self.deal_cards()
+        
 
     def check_winner(self):
         # Automatic win (Player's score >= 91)
