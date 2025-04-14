@@ -1,4 +1,9 @@
 import random
+from collections import deque
+FIGURE_VALUES = {
+    'A': 10, 'K': 9, 'Q': 8, 'J': 7,  # Base values for figures
+    'AD': 15, 'KC': 13, 'QH': 11, 'QD': 11, 'JH': 16  # Special combinations
+}
 
 class Deck:
     """a card deck for the Get 'Em game containing numbers 2-10 (four copies each)."""
@@ -17,3 +22,26 @@ class Deck:
     def is_empty(self):
         """check whether the deck has been depleted of cards."""
         return not bool(self.cards)
+    def create_figure_cards(self): #5676101
+
+        '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
+         We do this so that we have a double-ended queue of figure cards as tuples (id, value)
+        '''
+        cards = []
+        # For each figure (A,K,Q,J), create cards with all four suits
+        for figure in self.figures:
+            for suit in self.suits:
+                # Create a key for special combinations (for example: 'AD' for Ace of Diamonds)
+                key = figure + suit[-1]
+
+                # Get special value if exists, otherwise use the base figure value
+                value = FIGURE_VALUES.get(key, FIGURE_VALUES[figure])
+
+                # Store as tuple: ('KH', 9) - King of Hearts with value 9
+                cards.append((key, value))
+
+        # Shuffle the figure cards
+        random.shuffle(cards)
+
+        # Return as a deque for efficient popping from front
+        return deque(cards)
