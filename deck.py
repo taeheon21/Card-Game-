@@ -14,10 +14,10 @@ class Deck:
         for number in range(2, 11):  #generate numbers 2-10
             self.cards += [number] * 4  #add four copies of each number
         random.shuffle(self.cards)  #randomize card order
-        #suits
-        self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds']
+        #suits 
+        self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
-        self.figures = ['A', 'K', 'Q', 'J']
+        self.figures = ['A', 'K', 'Q', 'J'] #5662884
 
     def draw_card(self):
         """remove and return the top card from the deck. returns none when empty."""
