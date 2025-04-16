@@ -1,5 +1,7 @@
 from game_logic.deck import Deck
 from game_logic.player import Player
+import random # (for coin flip)
+
 
 class Game:
     """manages the overall game flow and logic"""
@@ -9,15 +11,17 @@ class Game:
         self.deck = Deck()
         self.player = Player("you")
         self.computer = Player("computer")
-        self.rounds = 5 #this is new but it might make the game quicker to play (we dont need it)
+        self.round = 0
+        self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
 
-        def start_game(self):
+    def start_game(self):
         """starts the game"""
         print("Game is starting...")
-        while self.round <= self.total_rounds:
+        while self.round <= self.total_rounds:  # I can change it to def game_over if we won't select total round
             self.round += 1
             print(f"Round {self.round}")
             self.play_round()
+        self.declare_winner()
 
 
 
@@ -42,19 +46,22 @@ class Game:
         elif card_computer > card_player:
             print(f"Computer win {self.round}!")
             self.computer.add_score(card_computer)
-        # flip coin(else) I just use random I could make flip coin to decide winner.
+        # flip coin(else) I  use random I could make flip coin to decide winner.
         else:
-            print(f"This round is tie! So We will decide winner by flip the coin")
+            print(f"This round is tie! Deciding winner by coin flip...")
+            winner = random.choice([self.player, self.computer])
+            if winner is self.player:
+                print(f"You win {self.round} by coin flip!")
+                self.player.add_score(card_player)
+            else:
+                print(f"Computer wins {self.round} by coin flip!")
+                self.computer.add_score(card_computer)
 
-           # !!! I think we should make this flip coin logic /There are two coins for Player and for Computer. It will be randomly chosen  !!!
-            chosen = random.choice(self.coin)
-
-            print(f"{Chosen.name} win the game !")  # Just for now. I will change it 
-
-
-    def rounds_done(self):
 
     def game_over(self):
+        """check if game completion conditions are satisfied(round expired or deck is empty)"""
+        return self.round >= self.total_rounds or self.deck.is_empty()
+
 
     def declare_winner(self):
         """ declare final winner"""
@@ -65,9 +72,22 @@ class Game:
             print(f"Congratulations! You win the Game!!")
         elif self.player.score < self.computer.score:
             print(f"Computer wins the game")
-        else:
-            print(f"The game is tie! So We will decide winner by flip the coin")
- 
+    """ else:
+            print(f"This round is tie! Deciding winner by coin flip...")  If we have total 5 rounds I think this codes are unnecessary"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
