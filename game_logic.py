@@ -1,29 +1,27 @@
 from game_logic.deck import Deck
 from game_logic.player import Player
-import random # (for coin flip)
+import random # (for coin flip) / I(5662884) wrote all of the codes except def __init part(5667929 wrote that part)
 
 
 class Game:
     """manages the overall game flow and logic"""
 
-    def __init__(self):
+    def __init__(self):  # 5667929 wrote def __init part except self.round
         """initialize the game with a deck, two players, and a set number of rounds"""
         self.deck = Deck()
         self.player = Player("you")
         self.computer = Player("computer")
-        self.round = 0
+        self.round = 0  # 5662884 
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
 
     def start_game(self):
         """starts the game"""
         print("Game is starting...")
-        while self.round <= self.total_rounds:  # I can change it to def game_over if we won't select total round
+        while not self.game_over():
             self.round += 1
             print(f"Round {self.round}")
             self.play_round()
         self.declare_winner()
-
-
 
 
     def play_round(self):
@@ -48,7 +46,7 @@ class Game:
             self.computer.add_score(card_computer)
         # flip coin(else) I  use random I could make flip coin to decide winner.
         else:
-            print(f"This round is tie! Deciding winner by coin flip...")
+            print(f"This round is a tie! Deciding winner by coin flip...")
             winner = random.choice([self.player, self.computer])
             if winner is self.player:
                 print(f"You win {self.round} by coin flip!")
