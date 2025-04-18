@@ -1,10 +1,7 @@
 import pygame
-import sys # for quiting the game once its over
-
 from deck import Deck
-from collections import defaultdict
-
 import random
+import sys # for quiting the game once its over
 
 pygame.init()
 
@@ -21,6 +18,8 @@ CARD_WIDTH = 60
 CARD_HEIGHT = 90
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+GOLD = (255, 215, 0)
+
 #figure cards size
 FIGURE_CARD_WIDTH = 70
 FIGURE_CARD_HEIGHT = 105
@@ -71,60 +70,31 @@ def get_card_image_path(value, suit):
     return f"assets/cards/png/{value_str}_of_{suit_str}.png"
 
 deck = Deck()  # Create a new shuffled deck
- 
-
-grouped_cards = defaultdict(list)
-suits = ['hearts', 'diamonds', 'spades', 'clubs']
-value_counts = {}
-
-# Build 36 (value, suit) pairs manually using the values from the deck
-all_values = deck.cards.copy()
-random.shuffle(all_values)
-
-for value in all_values:
-    count = value_counts.get(value, 0)
-    if count < 4:
-        suit = suits[count]
-        grouped_cards[value].append((value, suit))
-        value_counts[value] = count + 1
-
-
-player_values = []
-computer_values = []
-
-for value in range(2, 11):  # For each value 2–10
-    suits = grouped_cards[value]
-
-    # Just in case, shuffle again to randomize suit order
-    random.shuffle(suits)
-
-    # First 2 to player, last 2 to computer
-    player_values.extend(suits[:2])
-    computer_values.extend(suits[2:])
 
 player_hand = []
 computer_hand = []
-
-player_cards = player_values
-computer_cards = computer_values
 
 card_spacing = 6
 total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
 start_x = (screen.get_width() - total_width) // 2
 
-
+# Fill player and computer hands
+for i in range(36):
+    value, suit = deck.draw_card()
+    image_path = get_card_image_path(value, suit)
     
-for i, (value, suit) in enumerate(player_cards):
-        x = start_x + (i % 9) * (CARD_WIDTH + card_spacing)
-        y = 500 + (i // 9) * (CARD_HEIGHT + 10) 
-        image_path = get_card_image_path(value, suit)  # Get the image path for that value and suit
+    if i % 2 == 0:
+    # Player gets every even-indexed card
+        x = start_x + ((i // 2) % 9) * (CARD_WIDTH + card_spacing)
+        y = 500 + ((i // 2) // 9) * (CARD_HEIGHT + 10)
         player_hand.append(Card(x, y, value, suit, image_path))
 
-for i, (value, suit) in enumerate(computer_cards):
-        x = start_x + (i % 9) * (CARD_WIDTH + card_spacing)
-        y = 35 + (i // 9) * (CARD_HEIGHT + 10) 
-        image_path = get_card_image_path(value, suit)  # Get the image path for that value and suit
+    else:
+    # Computer gets every odd-indexed card
+        x = start_x + ((i // 2) % 9) * (CARD_WIDTH + card_spacing)
+        y = 33 + ((i // 2) // 9) * (CARD_HEIGHT + 10)
         computer_hand.append(Card(x, y, value, suit, image_path))
+
 
 figure_cards = deck.create_figure_cards() # shuffled list of figure cards(imported from the deck class)
 center_figure = figure_cards.popleft()  # pick one figure card from the top
