@@ -1,12 +1,12 @@
 from game_logic.deck import Deck
 from game_logic.player import Player
-import random # (for coin flip) / I(5662884) wrote all of the codes except def __init part(sultan wrote that part)
+import random # (for coin flip) / I(5662884) wrote all of the codes except def __init part(5667929 wrote that part)
 
 
 class Game:
     """manages the overall game flow and logic"""
 
-    def __init__(self):  # sultan wrote def __init part except self.round
+    def __init__(self):  # 5667929 wrote def __init part except self.round
         """initialize the game with a deck, two players, and a set number of rounds"""
         self.deck = Deck()
         self.player = Player("you")
