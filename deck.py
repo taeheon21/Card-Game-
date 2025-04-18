@@ -12,7 +12,8 @@ class Deck:
         """start a shuffling the deck to include four instances of each number 2 through 10."""
         self.cards = []
         for number in range(2, 11):  #generate numbers 2-10
-            self.cards += [number] * 4  #add four copies of each number
+            for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
+                self.cards.append((number, suit))
         random.shuffle(self.cards)  #randomize card order
         #suits 
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
