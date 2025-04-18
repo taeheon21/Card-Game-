@@ -12,12 +12,12 @@ class Deck:
         """start a shuffling the deck to include four instances of each number 2 through 10."""
         self.cards = []
         for number in range(2, 11):  #generate numbers 2-10
-            for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
-                 self.cards.append((number, suit))  # Make each card a (value, suit) tuple 
-        #suits
-        self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds']
+            self.cards += [number] * 4  #add four copies of each number
+        random.shuffle(self.cards)  #randomize card order
+        #suits 
+        self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
-        self.figures = ['A', 'K', 'Q', 'J']
+        self.figures = ['A', 'K', 'Q', 'J'] #5662884
 
     def draw_card(self):
         """remove and return the top card from the deck. returns none when empty."""
