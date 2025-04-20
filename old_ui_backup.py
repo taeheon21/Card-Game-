@@ -5,52 +5,6 @@ import sys # for quiting the game once its over
 
 pygame.init()
 
-def displayWelcomeScreen():
-    screen.fill(green)
-    font = pygame.font.SysFont(None, 40)
-
-    welcome_message= ["\n****** Get 'Em Card Game ******",
-    "You vs Computer - good luck!",
-    "Highest card wins each round - simple!",
-    "Press key to start"]
-
-    for i, line in enumerate(welcome_message):
-        text = font.render(line, True, WHITE)
-        text_rect = text.get_rect(center=(screen.get_width() // 2, 240 + i * 60))
-        screen.blit(text, text_rect)
-
-    pygame.display.flip()
-    # Wait for user to press a key
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                waiting = False 
-
-def print_round_outcome(p_card, cpu_card, who_won):
-    """Shows what happened in this round"""
-    #  adding extra space here cuz y not
-    print(f"\nYou played: {p_card}")
-    print(f"CPU played: {cpu_card}")
-    # using arrow symbol looks cool
-    print(f"--> {who_won} won this round")
-
-def scoreDisplay(plyr, comp):
-    """updates the scores for both players"""
-    # using double-dash as separator
-    print(f"\nSCORES -- You: {plyr.score} | PC: {comp.score}")
-    # could add more info here later maybe
-
-def announce_winner(champion):
-    """tells everyone who won at the end"""
-    # trophy emoji makes it more apiling
-    print(f"\n🏆 WINNER: {champion}!! 🏆")
-    # extra line just because
-    print("Thanks for playing!\n") 
-
 #Creating a window(The playing area):
 screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
@@ -117,8 +71,6 @@ def get_card_image_path(value, suit):
 
 deck = Deck()  # Create a new shuffled deck
 
-displayWelcomeScreen() #Welcome message!
-
 player_hand = []
 computer_hand = []
 
@@ -178,6 +130,7 @@ center_figure_card = Card(
     border_color=GOLD                 # Gold border
 )
 
+
 # The Game loop
 game_is_running = True
 
@@ -203,6 +156,4 @@ while game_is_running:
 
     pygame.display.flip()
 pygame.quit()
-announce_winner("You")  # Replace "You" with logic later
-
 sys.exit()
