@@ -54,7 +54,9 @@ class Game:
             else:
                 print(f"Computer wins {self.round} by coin flip!")
                 self.computer.add_score(card_computer)
-
+         # Special rule: no 3 or 10 right after using 2ofSp or 9ofSp
+        if user.used_special == True and user_rank in ['3', '10']:
+           raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
 
     def game_over(self):
         """check if game completion conditions are satisfied(round expired or deck is empty)"""
