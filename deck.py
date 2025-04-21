@@ -20,13 +20,6 @@ class Deck:
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
 
-    def draw_card(self):
-        """remove and return the top card from the deck. returns none when empty."""
-        return self.cards.pop() if self.cards else None
-
-    def is_empty(self):
-        """check whether the deck has been depleted of cards."""
-        return not bool(self.cards)
     def create_figure_cards(self): #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
