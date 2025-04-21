@@ -2,7 +2,7 @@ class Player: #5676101 (all of it)
 
     #Represents a player in the card game and tracks the player's hand, score, and special abilities like skip turns.
 #For use when programming cpu (probably): #self.human = human  # Check whether this is a human or AI player
-    def __init__(self, name: str, is_human: bool = True):
+    def __init__(self, name):
 
         self.name = name
         self.hand = []  # List of cards like '4 of spades'
@@ -11,7 +11,7 @@ class Player: #5676101 (all of it)
         self.used_special = False  # Flag if player used a special card
         self.last_special = None  # The last special card played
 
-    def play_card(self, card: str) -> str:
+    def play_card(self, card):
         
         #Play a card from the player's hand and raises ValueError
         
