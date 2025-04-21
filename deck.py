@@ -50,3 +50,20 @@ class Deck:
 
         # Return as a deque for efficient popping from front
         return deque(cards)
+   def create_number_cards(self): #5676101
+        """
+        Generates number cards from 2 to 10 for all suits.
+           It creates a list of number cards and their suits (10 of diamonds, 2 of hearts...)
+        """
+        number_cards = []  # For holding number cards
+
+        # Assuming self.ranks only has '2' to '10' 
+        for val in self.ranks:
+            for suit in self.suits:
+                # Creation of cards (suit + rank(val))
+                card = val + suit
+                number_cards.append(card)
+        
+        random.shuffle(number_cards)
+
+        return number_cards
