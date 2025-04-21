@@ -13,7 +13,8 @@ class Game:
         self.computer = Player("computer")
         self.round = 0  # 5662884 
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
-
+        self.user_round_sum = 0
+        self.computer_round_sum = 0
     def start_game(self):
         """starts the game"""
         print("Game is starting...")
