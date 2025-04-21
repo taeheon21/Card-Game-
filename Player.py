@@ -39,19 +39,19 @@ class Player: #5676101 (all of it)
             return True
         return False
 
-    def add_score(self, value: int):
+    def add_score(self, value):
 
         #Add points to the player's score.
 
         self.score += value
 
-    def has_card(self, card: str) -> bool:
+    def has_card(self, card):
 
         #Check if the player has a specific card in hand. Returns true if the card is in hand
 
         return card in self.hand
 
-    def get_rank(self, card: str) -> str:
+    def get_rank(self, card):
         
         #Extract the rank from a card string. Example: From '10 of clubs' -> '10'
 
