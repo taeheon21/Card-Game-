@@ -43,20 +43,20 @@ class Game:
         # Comparing number
         if card_player > card_computer:
             print(f"You win {self.round}!")
-            self.player.add_score(card_player)
+            user.add_score(card_player)
         elif card_computer > card_player:
             print(f"Computer win {self.round}!")
-            self.computer.add_score(card_computer)
+            computer.add_score(card_computer)
         # flip coin(else) I  use random I could make flip coin to decide winner.
         else:
             print(f"This round is a tie! Deciding winner by coin flip...")
             winner = random.choice([self.player, self.computer])
-            if winner is self.player:
+            if winner is self.players[0]:
                 print(f"You win {self.round} by coin flip!")
-                self.player.add_score(card_player)
+                user.add_score(card_player)
             else:
                 print(f"Computer wins {self.round} by coin flip!")
-                self.computer.add_score(card_computer)
+                computer.add_score(card_computer)
          # Special rule: no 3 or 10 right after using 2ofSp or 9ofSp 5676101
         if user.used_special == True and user_rank in ['3', '10']:
            raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
@@ -74,11 +74,11 @@ class Game:
     def declare_winner(self):
         """ declare final winner"""
         print("Game Over!")
-        print(f"Your score is {self.player.score}")
-        print(f"Computer score is {self.computer.score}")
-        if self.player.score > self.computer.score:
+        print(f"Your score is {self.players[0].score}")
+        print(f"Computer score is {self.players[1].score}")
+        if self.players[0].score > self.players[1].score:
             print(f"Congratulations! You win the Game!!")
-        elif self.player.score < self.computer.score:
+        elif self.players[0].score < self.players[1].score:
             print(f"Computer wins the game")
     """ else:
             print(f"This round is tie! Deciding winner by coin flip...")  If we have total 5 rounds I think this codes are unnecessary"""
