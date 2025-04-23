@@ -14,8 +14,7 @@ class Game:
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
         self.user_round_sum = 0
         self.computer_round_sum = 0
-        self.overall_user_sum = 0 #These two attributes are for keeping track of overall score for both players (5676101)
-        self.overall_computer_sum = 0
+        
     def start_game(self):
         """starts the game"""
         print("Game is starting...")
