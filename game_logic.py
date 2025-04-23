@@ -50,7 +50,7 @@ class Game:
         # flip coin(else) I  use random I could make flip coin to decide winner.
         else:
             print(f"This round is a tie! Deciding winner by coin flip...")
-            winner = random.choice([self.player, self.computer])
+            winner = random.choice([self.players[0], self.players[1])
             if winner is self.players[0]:
                 print(f"You win {self.round} by coin flip!")
                 user.add_score(card_player)
@@ -66,6 +66,9 @@ class Game:
         self.user_round_sum += value_user
         if self.user_round_sum in [12, 19]: # If statement used to check if sum is 12 or 19
            raise ValueError("Error: The sum of your played cards cannot be 12 or 19")
+        for player in self.players: #Sum of 91 exception (5676101)
+            if player.score >= 91:
+                print(f"{player.name} wins with 91 points!"
     def game_over(self):
         """check if game completion conditions are satisfied(round expired or deck is empty)"""
         return self.round >= self.total_rounds or self.deck.is_empty()
