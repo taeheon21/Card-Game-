@@ -41,6 +41,7 @@ class Player: #5676101 (all of it)
         #Add points to the player's score.
 
         self.score += value
+        return value
 
     def has_card(self, card):
 
