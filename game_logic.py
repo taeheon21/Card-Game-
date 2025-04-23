@@ -64,7 +64,7 @@ class Game:
         value_user = int(rank_user)
         self.user_round_sum += value_user
         if self.user_round_sum in [12, 19]: # If statement used to check if sum is 12 or 19
-           raise ValueError("You have reached an invalid card total of 12 or 19 this round.")
+           raise ValueError("Error: The sum of your played cards cannot be 12 or 19")
     def game_over(self):
         """check if game completion conditions are satisfied(round expired or deck is empty)"""
         return self.round >= self.total_rounds or self.deck.is_empty()
