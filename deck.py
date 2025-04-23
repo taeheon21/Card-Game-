@@ -11,15 +11,17 @@ class Deck:
     def __init__(self):
         """start a shuffling the deck to include four instances of each number 2 through 10."""
         self.cards = []
+        '''
         for number in range(2, 11):  #generate numbers 2-10
             for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
                 self.cards.append((number, suit))
         random.shuffle(self.cards)  #randomize card order
+        '''
         #suits 
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
-
+        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
     def create_figure_cards(self): #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
