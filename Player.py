@@ -1,7 +1,7 @@
 class Player: #5676101 (all of it)
 
     #Represents a player in the card game and tracks the player's hand, score, and special abilities like skip turns.
-#For use when programming cpu (probably): #self.human = human  # Check whether this is a human or AI player
+#For use when programming cpu as boolean (probably): #self.human = human  # Check whether this is a human or AI player
     def __init__(self, name):
 
         self.name = name
@@ -18,8 +18,6 @@ class Player: #5676101 (all of it)
         if card in self.hand:
             self.hand.remove(card)
             return card
-        else:
-            raise ValueError(f"{card} not in hand")
 
     def auto_play(self):
 
