@@ -10,7 +10,6 @@ class Deck:
 
     def __init__(self):
         """start a shuffling the deck to include four instances of each number 2 through 10."""
-        self.cards = []
         '''
         for number in range(2, 11):  #generate numbers 2-10
             for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
