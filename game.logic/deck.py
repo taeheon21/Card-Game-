@@ -32,7 +32,7 @@ class Deck:
         for figure in self.figures:
             for suit in self.suits:
                 # Create a key for special combinations (for example: 'AD' for Ace of Diamonds)
-                key = figure + suit[-1]
+                key = figure + suit[0].upper()
 
                 # Get special value if exists, otherwise use the base figure value
                 value = FIGURE_VALUES.get(key, FIGURE_VALUES[figure])
