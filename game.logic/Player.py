@@ -53,4 +53,4 @@ class Player: #5676101 (all of it)
         
         #Extract the rank from a card string. Example: From '10 of clubs' -> '10'
 
-        return card[:-1]  
+        return card[0]  
