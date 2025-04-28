@@ -56,7 +56,7 @@ class Deck:
         for val in self.ranks:
             for suit in self.suits:
                 # Creation of cards (suit + rank(val))
-                card = val + suit
+                card = val + suit[0].upper()
                 number_cards.append(card)
         
         random.shuffle(number_cards)
