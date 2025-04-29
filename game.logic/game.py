@@ -2,7 +2,7 @@ from game_logic.deck import Deck
 from game_logic.player import Player
 import random # (for coin flip) / I(5662884) wrote all of the codes except def __init part(5667929 wrote that part)
 
-
+#5676101, I've just completely rewritten most of the code to fix some issues and maintain clarity
 class Game:
     """manages the overall game flow and logic"""
 
