@@ -1,6 +1,7 @@
 import pygame
-from deck import Deck
 import random
+from deck import Deck
+from collections import defaultdict
 import sys # for quiting the game once its over
 
 pygame.init()
@@ -76,7 +77,7 @@ class Card:
         #set the card position and size relative to the screen
         self.rect = pygame.Rect(position_x, position_y, width, height)
         
-        self.value = value #stores card's valu
+        self.value = value #stores card's value
         self.suit = suit    #tores card's suit
         self.border_color = border_color 
 
@@ -115,32 +116,43 @@ def get_card_image_path(value, suit):
     suit_str = suit.lower()
     return f"assets/cards/png/{value_str}_of_{suit_str}.png"
 
-deck = Deck()  # Create a new shuffled deck
-
 displayWelcomeScreen() #Welcome message!
-
-player_hand = []
-computer_hand = []
 
 card_spacing = 6
 total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
 start_x = (screen.get_width() - total_width) // 2
 
+deck = Deck()  # Create a new shuffled deck
+cards = deck.cards.copy()
+random.shuffle(cards)
+grouped_cards = defaultdict(list)
+for value, suit in cards:
+    grouped_cards[value].append((value, suit))
+
+player_cards = []
+computer_cards = []
+for value in range(2, 11):  # For each value from 2 to 10
+    suits = grouped_cards[value]
+    random.shuffle(suits)  # Shuffle suits for this value
+
+    # First 2 go to player, last 2 go to computer
+    player_cards.extend(suits[:2])
+    computer_cards.extend(suits[2:])
+
+player_hand = []
+computer_hand = []
 # Fill player and computer hands
-for i in range(36):
-    value, suit = deck.draw_card()
-    image_path = get_card_image_path(value, suit)
-    
-    if i % 2 == 0:
-    # Player gets every even-indexed card
-        x = start_x + ((i // 2) % 9) * (CARD_WIDTH + card_spacing)
-        y = 500 + ((i // 2) // 9) * (CARD_HEIGHT + 10)
+for player, (value, suit) in enumerate(player_cards):
+        
+        x = start_x + (player  % 9) * (CARD_WIDTH + card_spacing)
+        y = 500  + (player // 9) * (CARD_HEIGHT + 10)
+        image_path = get_card_image_path(value, suit)
         player_hand.append(Card(x, y, value, suit, image_path))
 
-    else:
-    # Computer gets every odd-indexed card
-        x = start_x + ((i // 2) % 9) * (CARD_WIDTH + card_spacing)
-        y = 33 + ((i // 2) // 9) * (CARD_HEIGHT + 10)
+for computer, (value, suit) in enumerate(computer_cards):    # Computer gets every odd-indexed card
+        x = start_x + (computer % 9) * (CARD_WIDTH + card_spacing)
+        y = 33 + (computer // 9) * (CARD_HEIGHT + 10)
+        image_path = get_card_image_path(value, suit)
         computer_hand.append(Card(x, y, value, suit, image_path))
 
 
@@ -180,21 +192,51 @@ center_figure_card = Card(
 
 # The Game loop
 game_is_running = True
+selected_card = None
+computer_card = None
 
 while game_is_running:
     screen.fill(green)
 
-    for event in pygame.event.get(): #checking for any actions a player takes
-        if event.type == pygame.QUIT: # Do they press the 'exit' button?
+    for action in pygame.event.get(): #checking for any actions a player takes
+        if action.type == pygame.QUIT: # Do they press the 'exit' button?
             game_is_running = False # quit if yes
-            
+        
+        if action.type == pygame.MOUSEBUTTONDOWN: #Detecting mouse movement
+            mouse_position= pygame.mouse.get_pos()
+            print(mouse_position) 
+            for card in player_hand:
+                if card.rect.collidepoint(mouse_position):
+                    selected_card= card  
+                    print(f"You selected: {selected_card.value} of {selected_card.suit}")
+                    player_hand.remove(selected_card)
+                    
+                    # Position the selected card near center
+                if selected_card is not None:
+                    selected_card.rect.x = screen.get_width() // 2 - CARD_WIDTH +150
+                    selected_card.rect.y = screen.get_height() // 2
+
+                    computer_card = random.choice(computer_hand)
+                    computer_hand.remove(computer_card)
+                    # Position the computer card near center too
+                    computer_card.rect.x = screen.get_width() // 2 -150
+                    computer_card.rect.y = screen.get_height() // 2
+
+                    break
+
     for card in player_hand:
         card.draw(screen)
     
     for card in computer_hand:
         card.draw(screen)
-
+    
     center_figure_card.draw(screen) # Draw center figure card
+
+# Now draw the played cards if they exist!
+    if selected_card:
+        selected_card.draw(screen)
+    if computer_card:
+        computer_card.draw(screen)
 
     font = pygame.font.SysFont(None, 28)
     label = font.render("Round Card", True, GOLD)
