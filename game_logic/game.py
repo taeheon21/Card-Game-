@@ -1,5 +1,5 @@
 from game_logic.deck import Deck
-from game_logic.player import Player
+from game_logic.Player import Player
 import random # (for coin flip) / I(5662884) wrote all of the codes except def __init part(5667929 wrote that part)
 
 #5676101, I've just completely rewritten most of the code to fix some issues and maintain clarity
@@ -71,7 +71,7 @@ class Game:
             if player.score >= 91:
                 print(f"{player.name} wins with 91 points!")
         # Comparing number
-         if value_user > value_computer:
+        if value_user > value_computer:
             print("You win this round!")
             user.add_score(figure_value)
         elif value_user < value_computer:

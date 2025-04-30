@@ -1,3 +1,5 @@
+#Work To Do: Update scoreboard + Manage multible rounds
+
 import pygame
 import random
 from game_logic.deck import Deck
@@ -31,20 +33,6 @@ def displayWelcomeScreen():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 waiting = False 
-
-def print_round_outcome(p_card, cpu_card, who_won):
-    """Shows what happened in this round"""
-    #  adding extra space here cuz y not
-    print(f"\nYou played: {p_card}")
-    print(f"CPU played: {cpu_card}")
-    # using arrow symbol looks cool
-    print(f"--> {who_won} won this round")
-
-def scoreDisplay(plyr, comp):
-    """updates the scores for both players"""
-    # using double-dash as separator
-    print(f"\nSCORES -- You: {plyr.score} | PC: {comp.score}")
-    # could add more info here later maybe
 
 def announce_winner(champion):
     """tells everyone who won at the end"""
@@ -153,16 +141,16 @@ player_hand = []
 computer_hand = []
 
 # Fill player and computer hands
-for player, (value, suit) in enumerate(player_cards):
+for plyer, (value, suit) in enumerate(player_cards):
         
-        x = start_x + (player  % 9) * (CARD_WIDTH + card_spacing)
-        y = 500  + (player // 9) * (CARD_HEIGHT + 10)
+        x = start_x + (plyer  % 9) * (CARD_WIDTH + card_spacing)
+        y = 500  + (plyer // 9) * (CARD_HEIGHT + 10)
         image_path = get_card_image_path(value, suit)
         player_hand.append(Card(x, y, value, suit, image_path))
 
-for computer, (value, suit) in enumerate(computer_cards):    # Computer gets every odd-indexed card
-        x = start_x + (computer % 9) * (CARD_WIDTH + card_spacing)
-        y = 33 + (computer // 9) * (CARD_HEIGHT + 10)
+for comp, (value, suit) in enumerate(computer_cards):    # Computer gets every odd-indexed card
+        x = start_x + (comp % 9) * (CARD_WIDTH + card_spacing)
+        y = 33 + (comp // 9) * (CARD_HEIGHT + 10)
         image_path = get_card_image_path(value, suit)
         computer_hand.append(Card(x, y, value, suit, image_path))
 
@@ -206,9 +194,19 @@ game_is_running = True
 selected_card = None
 computer_card = None
 round_outcome= None
+warning = ""
+warning_timer = 0 
+round_number = 0
+
+round_in_progress = False
+round_ended = False
+round_end_time = 0
 
 while game_is_running:
     screen.fill(green)
+
+    if warning and pygame.time.get_ticks() > warning_timer:
+        warning = ""
 
     for action in pygame.event.get(): #checking for any actions a player takes
         if action.type == pygame.QUIT: # Do they press the 'exit' button?
@@ -221,16 +219,32 @@ while game_is_running:
                 if card.rect.collidepoint(mouse_position):
                     selected_card= card  
                     print(f"You selected: {selected_card.value} of {selected_card.suit}")
-                    player_hand.remove(selected_card)
-                    
+                    selected_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
+                    if selected_card_str in player.hand:
+                        if selected_card_str in ['2S', '9S']:
+                            player.used_special = True
+                            player.last_special = selected_card_str
+                            player.play_card(selected_card_str)    
+                            player_hand.remove(selected_card)
+
+                        else:
+                            if player.last_special in ['2S','9S'] and selected_card.value in['3', '9']:
+                                warning = "You can't play 3 or 10 after 2S or 9s" # Edit the message later on!
+                                warning_timer = pygame.time.get_ticks() + 8000 
+                                continue
+                            player.play_card(selected_card_str)
+                            player_hand.remove(selected_card)
                     # Position the selected card near center
                 if selected_card is not None:
                     selected_card.rect.x = screen.get_width() // 2 - CARD_WIDTH +150
                     selected_card.rect.y = screen.get_height() // 2
-                    
+
                 if selected_card is not None and computer_hand:
                     computer_card = random.choice(computer_hand)
+                    computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
+                    computer.play_card(selected_card_str)
                     computer_hand.remove(computer_card)
+
                     # Also Position the computer card near center 
                     computer_card.rect.x = screen.get_width() // 2 -150
                     computer_card.rect.y = screen.get_height() // 2
@@ -239,14 +253,15 @@ while game_is_running:
                 if selected_card and computer_card and round_outcome is None:
                     player_selected_card = int(selected_card.value)
                     computer_selected_card = int(computer_card.value)
-
+                    
+                    figure_value = int(center_figure[1] )
                     #Comparing values:
                     if player_selected_card> computer_selected_card:
                         round_outcome= "You win this round!"
-                        player.add_score(player_selected_card)
+                        player.add_score(figure_value)
                     elif player_selected_card < computer_selected_card:
                         round_outcome= "computer wins!"
-                        computer.add_score(computer_selected_card)             
+                        computer.add_score(figure_value)             
                     else:
                         round_outcome = "It's a tie!" 
                     if player.score >= 91 or computer.score >= 91:
@@ -263,7 +278,25 @@ while game_is_running:
                     score_text = font.render(f"You: {player.score} | Computer: {computer.score}", True, WHITE)
                     screen.blit(score_text, (screen.get_width() // 2 - 120, 290))
 
+                        # Wait and reset for next round
+                    pygame.display.flip()
+                    pygame.time.wait(3000)  # Show results for 3 seconds
 
+                    selected_card = None
+                    computer_card = None
+
+                        # Update next figure card
+                    if figure_cards:
+                        next_figure = figure_cards.popleft()
+                        center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
+                        center_figure_card.image = pygame.transform.scale(center_figure_card.image, (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                        center_figure_card.value = next_figure[1]
+                        center_figure = next_figure
+                    else:
+                        game_is_running = False  # No more figure cards left
+                    
+    # Reset for next round
+ 
     for card in player_hand:
         card.draw(screen)
     
@@ -271,7 +304,7 @@ while game_is_running:
         card.draw(screen)
     
     center_figure_card.draw(screen) # Draw center figure card
-
+    
 # draw the played cards 
     if selected_card:
         selected_card.draw(screen)
@@ -281,7 +314,18 @@ while game_is_running:
     font = pygame.font.SysFont(None, 28)
     label = font.render("Round Card", True, GOLD)
     screen.blit(label, (center_figure_card.rect.centerx - 40, center_figure_card.rect.top - 25))
-
+    
+    if warning:
+        font = pygame.font.SysFont(None, 30)
+        warning_text = font.render(warning, True, (255, 0, 0))  # Red
+        screen.blit(warning_text, (screen.get_width() // 2 - 180, 650))
+    
+    # Draw Scoreboard
+    font = pygame.font.SysFont(None, 32)
+    round_number = 18 - len(player.hand)  # Total number of number-cards per player = 18
+    score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {player.skips_left}"
+    score_text = font.render(score_line, True, WHITE)
+    screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 10))  # Top center
 
     pygame.display.flip()
 pygame.quit()
