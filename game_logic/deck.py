@@ -10,23 +10,17 @@ class Deck:
 
     def __init__(self):
         """start a shuffling the deck to include four instances of each number 2 through 10."""
-        self.cards = []
+        '''
         for number in range(2, 11):  #generate numbers 2-10
             for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
                 self.cards.append((number, suit))
         random.shuffle(self.cards)  #randomize card order
+        '''
         #suits 
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
-
-    def draw_card(self):
-        """remove and return the top card from the deck. returns none when empty."""
-        return self.cards.pop() if self.cards else None
-
-    def is_empty(self):
-        """check whether the deck has been depleted of cards."""
-        return not bool(self.cards)
+        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
     def create_figure_cards(self): #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
@@ -37,7 +31,7 @@ class Deck:
         for figure in self.figures:
             for suit in self.suits:
                 # Create a key for special combinations (for example: 'AD' for Ace of Diamonds)
-                key = figure + suit[-1]
+                key = figure + suit[0].upper()
 
                 # Get special value if exists, otherwise use the base figure value
                 value = FIGURE_VALUES.get(key, FIGURE_VALUES[figure])
@@ -50,3 +44,20 @@ class Deck:
 
         # Return as a deque for efficient popping from front
         return deque(cards)
+    def create_number_cards(self): #5676101
+        """
+        Generates number cards from 2 to 10 for all suits.
+           It creates a list of number cards and their suits (10 of diamonds, 2 of hearts...)
+        """
+        number_cards = []  # For holding number cards
+
+        # Assuming self.ranks only has '2' to '10' 
+        for val in self.ranks:
+            for suit in self.suits:
+                # Creation of cards (suit + rank(val))
+                card = val + suit[0].upper()
+                number_cards.append(card)
+        
+        random.shuffle(number_cards)
+
+        return number_cards

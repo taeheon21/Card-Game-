@@ -1,6 +1,7 @@
 import pygame
 import random
-from deck import Deck
+from game_logic.deck import Deck
+from game_logic.Player import Player
 from collections import defaultdict
 import sys # for quiting the game once its over
 
@@ -123,24 +124,34 @@ total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
 start_x = (screen.get_width() - total_width) // 2
 
 deck = Deck()  # Create a new shuffled deck
-cards = deck.cards.copy()
+cards = deck.create_number_cards()
 random.shuffle(cards)
 grouped_cards = defaultdict(list)
-for value, suit in cards:
+for card_str in cards:
+    value = card_str[:-1]  # all characters except the last
+    suit_letter = card_str[-1]
+    suit_lookup = {'H': 'hearts', 'D': 'diamonds', 'S': 'spades', 'C': 'clubs'}
+    suit = suit_lookup[suit_letter]
     grouped_cards[value].append((value, suit))
 
 player_cards = []
 computer_cards = []
 for value in range(2, 11):  # For each value from 2 to 10
-    suits = grouped_cards[value]
-    random.shuffle(suits)  # Shuffle suits for this value
+    value_str = str(value)
+    suits = grouped_cards[value_str]
 
     # First 2 go to player, last 2 go to computer
     player_cards.extend(suits[:2])
     computer_cards.extend(suits[2:])
 
+player =Player("You")
+computer = Player("Computer")
+player.hand = player_cards  # Assign the list of 18 cards
+computer.hand = computer_cards
+
 player_hand = []
 computer_hand = []
+
 # Fill player and computer hands
 for player, (value, suit) in enumerate(player_cards):
         
@@ -194,6 +205,7 @@ center_figure_card = Card(
 game_is_running = True
 selected_card = None
 computer_card = None
+round_outcome= None
 
 while game_is_running:
     screen.fill(green)
@@ -215,14 +227,42 @@ while game_is_running:
                 if selected_card is not None:
                     selected_card.rect.x = screen.get_width() // 2 - CARD_WIDTH +150
                     selected_card.rect.y = screen.get_height() // 2
-
+                    
+                if selected_card is not None and computer_hand:
                     computer_card = random.choice(computer_hand)
                     computer_hand.remove(computer_card)
-                    # Position the computer card near center too
+                    # Also Position the computer card near center 
                     computer_card.rect.x = screen.get_width() // 2 -150
                     computer_card.rect.y = screen.get_height() // 2
 
                     break
+                if selected_card and computer_card and round_outcome is None:
+                    player_selected_card = int(selected_card.value)
+                    computer_selected_card = int(computer_card.value)
+
+                    #Comparing values:
+                    if player_selected_card> computer_selected_card:
+                        round_outcome= "You win this round!"
+                        player.add_score(player_selected_card)
+                    elif player_selected_card < computer_selected_card:
+                        round_outcome= "computer wins!"
+                        computer.add_score(computer_selected_card)             
+                    else:
+                        round_outcome = "It's a tie!" 
+                    if player.score >= 91 or computer.score >= 91:
+                        winner = player.name if player.score > computer.score else computer.name
+                        announce_winner(winner)
+                        pygame.display.flip()
+                        pygame.time.wait(10000)
+                        game_is_running = False
+                if round_outcome:
+                    font = pygame.font.SysFont(None, 36)
+                    result_text = font.render(round_outcome, True, GOLD)
+                    screen.blit(result_text, (screen.get_width() // 2 - 100, 250))
+
+                    score_text = font.render(f"You: {player.score} | Computer: {computer.score}", True, WHITE)
+                    screen.blit(score_text, (screen.get_width() // 2 - 120, 290))
+
 
     for card in player_hand:
         card.draw(screen)
@@ -232,7 +272,7 @@ while game_is_running:
     
     center_figure_card.draw(screen) # Draw center figure card
 
-# Now draw the played cards if they exist!
+# draw the played cards 
     if selected_card:
         selected_card.draw(screen)
     if computer_card:
@@ -245,6 +285,4 @@ while game_is_running:
 
     pygame.display.flip()
 pygame.quit()
-announce_winner("You")  # Replace "You" with logic later
-
 sys.exit()
