@@ -34,10 +34,10 @@ class Game:
         """play round, both player and computer will draw card and card values will be compared"""
         self.user_round_sum = 0
         self.computer_round_sum = 0
-        user_card = user.hand.pop(0)
-        computer_card = computer.hand.pop(0)
         user = self.players[0] #5676101
         computer = self.players[1]
+        user_card = user.hand.pop(0)
+        computer_card = computer.hand.pop(0)
         rank_user = user.get_rank(user_card)
         rank_computer = computer.get_rank(computer_card)
         #The figure cards being drawn 5676101
