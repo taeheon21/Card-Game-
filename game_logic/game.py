@@ -14,6 +14,7 @@ class Game:
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
         self.user_round_sum = 0
         self.computer_round_sum = 0
+        self.deal_cards()
         
     def start_game(self):
         """starts the game"""
@@ -24,7 +25,11 @@ class Game:
             self.play_round()
         self.declare_winner()
 
-
+    def deal_cards(self): #5676101 (Distributed randomly, have to think how to distribute according to rules)
+        number_deck = self.deck.create_number_cards()
+        self.players[0].hand == number_deck[:18] #First 18 cards go to user
+        self.players[1].hand == number_deck[18:] #Last 18 go to computer
+        
     def play_round(self):
         """play round, both player and computer will draw card and card values will be compared"""
         user_card = user.hand.pop(0)
