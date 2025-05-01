@@ -38,9 +38,9 @@ class Game:
         if not figure_deck:
             print("All figure cards have been exhausted!")
             return
-        self.current_figure = figure_deck.popleft()
-        figure_id = self.current_figure[0]
-        figure_value = self.current_figure[1]
+        self.current_figure = figure_deck.popleft() #5676101
+        figure_id = self.current_figure[0] #5676101
+        figure_value = self.current_figure[1] #5676101
         print(f"Figure card on the table: {figure_id} (worth {figure_value} points)")
         #If there is no card anymore
         if user_card is None or computer_card is None:
@@ -49,7 +49,7 @@ class Game:
 
         print(f"You played: {user_card}")
         print(f"Computer played: {computer_card}")
-        #Enforcing the 2 of Spades and 9 of Spades rule
+        #Enforcing the 2 of Spades and 9 of Spades rule (5676101)
         if user_card == '2S' or user_card == '9S':
             user.used_special = True
             user.last_special = user_card
