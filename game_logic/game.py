@@ -32,6 +32,8 @@ class Game:
         
     def play_round(self):
         """play round, both player and computer will draw card and card values will be compared"""
+        self.user_round_sum = 0
+        self.computer_round_sum = 0
         user_card = user.hand.pop(0)
         computer_card = computer.hand.pop(0)
         user = self.players[0] #5676101
