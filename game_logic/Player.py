@@ -33,6 +33,7 @@ class Player: #5676101 (all of it)
 
         if self.skips_left > 0:
             self.skips_left -= 1
+            print(f"{self.name} skips this turn.")
             return True
         return False
 
@@ -41,6 +42,7 @@ class Player: #5676101 (all of it)
         #Add points to the player's score.
 
         self.score += value
+        print(f"{self.name} gained {value} points!")
         return value
 
     def has_card(self, card):
