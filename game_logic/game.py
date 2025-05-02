@@ -11,9 +11,10 @@ class Game:
         self.deck = Deck()
         self.players = [Player("You"), Player("Computer")] #5676101
         self.round = 0  # 5662884 
-        self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
+        self.total_rounds = 15  # this is new but it might make the game quicker to play (we dont need it)
         self.user_round_sum = 0
         self.computer_round_sum = 0
+        self.current_figure = None
         self.deal_cards()
         
     def start_game(self):
