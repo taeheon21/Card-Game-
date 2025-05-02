@@ -9,18 +9,13 @@ class Deck:
     """a card deck for the Get 'Em game containing numbers 2-10 (four copies each)."""
 
     def __init__(self):
-        """start a shuffling the deck to include four instances of each number 2 through 10."""
-        '''
-        for number in range(2, 11):  #generate numbers 2-10
-            for suit in ['hearts', 'spades', 'clubs', 'diamonds']:
-                self.cards.append((number, suit))
-        random.shuffle(self.cards)  #randomize card order
-        '''
         #suits 
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
+        self.number_cards = self.create_number_cards()
+        self.figure_cards = self.create_figure_cards()
     def create_figure_cards(self): #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
@@ -61,3 +56,18 @@ class Deck:
         random.shuffle(number_cards)
 
         return number_cards
+        
+    def is_empty(self): #Check if figure card deck is empty (5676101)
+        return len(self.figure_cards) == 0
+        
+    def draw_figure_card(self): #Used for drawing figure cards (5676101)
+        if len(self.figure_cards) > 0:
+            return self.figure_cards.popleft()
+        else:
+            return None
+            
+    def redistribute_number_cards(self):
+        #Redistribute number cards if they run out (5676101)
+        print("Redistributing number cards...")
+        self.number_cards = self.create_number_cards()
+        return self.number_cards
