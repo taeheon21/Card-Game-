@@ -26,10 +26,29 @@ class Game:
             self.play_round()
         self.declare_winner()
 
-    def deal_cards(self): #5676101 (Distributed randomly, have to think how to distribute according to rules)
-        number_deck = self.deck.create_number_cards()
-        self.players[0].hand == number_deck[:18] #First 18 cards go to user
-        self.players[1].hand == number_deck[18:] #Last 18 go to computer
+    def deal_cards(self): #5676101 (Number cards are distributed 2 of each rank to the players with random suits)
+        # Clear players' hands
+        for player in self.players
+            player.hand = []
+            #Iterate throught each player, then through ranks and then through suits, so that number cards (e.g.: 2C, 2H, 3D, 3S,...) are created for both players
+        for player in enumerate(self.players): 
+            for rank in self.deck.ranks:
+                num_cards = []
+                for suit in [H,D,S,C]:
+                    num_cards.append(rank + suit)
+                #Shuffle for randomness of suit    
+                random.shuffle(num_cards)
+                #In each for loop 4 cards of the same rank with all suits are created, so only 2 of those (taken from beginning) are appened to player's hand
+                player.hand.extend(rank_cards[:2])
+
+        for player in self.players:
+                # Lambda function was used for sorting
+                # Sorting is done by number(rank) (left to right, 2 to 10)
+            player.hand.sort(key=lambda card: (
+                    int(player.get_rank(card))))
+
+         print("Cards have been dealt; Let the game start!")
+                    
         
     def play_round(self):
         """play round, both player and computer will draw card and card values will be compared"""
