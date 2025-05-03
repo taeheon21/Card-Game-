@@ -39,7 +39,7 @@ class Game:
                 #Shuffle for randomness of suit    
                 random.shuffle(num_cards)
                 #In each for loop 4 cards of the same rank with all suits are created, so only 2 of those (taken from beginning) are appened to player's hand
-                player.hand.extend(rank_cards[:2])
+                player.hand.extend(num_cards[:2])
 
         for player in self.players:
                 # Lambda function was used for sorting
