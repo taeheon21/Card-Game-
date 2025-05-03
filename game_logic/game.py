@@ -28,7 +28,7 @@ class Game:
 
     def deal_cards(self): #5676101 (Number cards are distributed 2 of each rank to the players with random suits)
         # Clear players' hands
-        for player in self.players
+        for player in self.players:
             player.hand = []
             #Iterate throught each player, then through ranks and then through suits, so that number cards (e.g.: 2C, 2H, 3D, 3S,...) are created for both players
         for player in enumerate(self.players): 
@@ -151,7 +151,7 @@ class Game:
                     print("You can't skip more than 2 times in a game!")
 
             user_card = self.players[0].play_card(card_index)
-       return user_card 
+            return user_card 
 
  def get_computer_card(self): #5676101
             
