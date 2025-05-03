@@ -61,11 +61,11 @@ class Game:
         rank_user = user.get_rank(user_card)
         rank_computer = computer.get_rank(computer_card)
         #The figure cards being drawn 5676101
-        figure_deck = self.deck.create_figure_cards()
-        if not figure_deck:
+        figure_card = self.deck.draw_figure_card()
+        if not figure_card:
             print("All figure cards have been exhausted!")
             return
-        self.current_figure = figure_deck.popleft() #5676101
+        self.current_figure = figure_card #5676101
         figure_id = self.current_figure[0] #5676101
         figure_value = self.current_figure[1] #5676101
         print(f"Figure card on the table: {figure_id} (worth {figure_value} points)")
