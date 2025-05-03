@@ -34,7 +34,7 @@ class Game:
         for player in enumerate(self.players): 
             for rank in self.deck.ranks:
                 num_cards = []
-                for suit in [H,D,S,C]:
+                for suit in ['H', 'D' , 'S' , 'C']:
                     num_cards.append(rank + suit)
                 #Shuffle for randomness of suit    
                 random.shuffle(num_cards)
