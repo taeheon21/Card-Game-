@@ -86,6 +86,18 @@ class Game:
             user.last_special = user_card
         else:
             user.used_special = False
+
+        user_special = user_card == '2S' or user_card == '9S'
+        computer_special = computer_card == '2S' or computer_card == '9S'
+
+        if user_special == True and computer_special == True:
+            if user_card == '9S' and computer_card != '9S':
+                print("You win this round by playing special card 9 of Spades!")
+                self.players[0].add_score(figure_value)
+            elif computer_card == '9S' and user_card != '9S':
+                print("Computer wins this round by playing 9 of Spades!")
+                self.players[1].add_score(figure_value)
+                
          # Special rule: no 3 or 10 right after using 2ofSp or 9ofSp 5676101
         if user.used_special == True and rank_user in ['3', '10']:
            raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
