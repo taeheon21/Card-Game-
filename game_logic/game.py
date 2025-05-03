@@ -85,6 +85,14 @@ class Game:
          # Special rule: no 3 or 10 right after using 2ofSp or 9ofSp 5676101
         if user.used_special == True and rank_user in ['3', '10']:
            raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
+        if user.used_special == True and ['3', '10'] not in user.hand:
+            computer.add_score(figure_value)
+            print("Computer wins this round!")
+        if computer.used_special == True and rank_computer in ['3', '10']:
+           raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
+        if computer.used_special == True and ['3', '10'] not in computer.hand:
+            user.add_score(figure_value)
+            print("You win this round!")
         #For each round the sum of the values of the number cards played will be stored (5676101)
         value_user = int(rank_user)
         self.user_round_sum += value_user
