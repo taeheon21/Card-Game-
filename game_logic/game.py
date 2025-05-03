@@ -56,7 +56,6 @@ class Game:
         self.computer_round_sum = 0
         user = self.players[0] #5676101
         computer = self.players[1]
-        user_card = user.hand.pop(0)
         computer_card = computer.hand.pop(0)
         rank_user = user.get_rank(user_card)
         rank_computer = computer.get_rank(computer_card)
@@ -69,11 +68,16 @@ class Game:
         figure_id = self.current_figure[0] #5676101
         figure_value = self.current_figure[1] #5676101
         print(f"Figure card on the table: {figure_id} (worth {figure_value} points)")
-        #If there is no card anymore
-        if user_card is None or computer_card is None:
-            print("There's no card to draw")
-            return
-
+        #Check if players have cards (in case they run out) (5671601)
+        if not self.players[0].hand or not self.players[1].hand:
+            print("Redistributing cards as one or both players have no cards left!")
+            number_cards = self.deck.redistribute_number_cards()
+            self.deal_cards()
+            
+         # Display user's hand (5676101)
+        print("Your hand:", ", ".join(self.players[0].hand))
+        #Playing a card by user and computer
+        user_card = self.get_user_card()
         print(f"You played: {user_card}")
         print(f"Computer played: {computer_card}")
         #Enforcing the 2 of Spades and 9 of Spades rule (5676101)
@@ -87,12 +91,12 @@ class Game:
            raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
         if user.used_special == True and ['3', '10'] not in user.hand:
             computer.add_score(figure_value)
-            print("Computer wins this round!")
+            print("You don't have 3s or 10s after using special cards, therefore you skipped this round and computer wins!")
         if computer.used_special == True and rank_computer in ['3', '10']:
            raise ValueError("Error: You can't play a 3 or 10 right after using a special card like 2 of spades or 9 of spades")
         if computer.used_special == True and ['3', '10'] not in computer.hand:
             user.add_score(figure_value)
-            print("You win this round!")
+            print("Computer skipped, you win this round!")
         #For each round the sum of the values of the number cards played will be stored (5676101)
         value_user = int(rank_user)
         self.user_round_sum += value_user
@@ -118,6 +122,29 @@ class Game:
             winner = random.choice([self.players[0], self.players[1]])
             winner.add_score(figure_value)  
             print(f"{winner.name} wins the round by coin flip!")
+            
+    def get_user_card(self): #5676101
+            prompt_range = len(self.players[0].hand) - 1
+            user_input = input(f"Choose a card to play (0-{prompt_range}) or -1 to skip: ")
+            card_index = int(user_input)
+            #skipping mechanic
+            if card_index == -1:
+                if self.players[0].skip_turn(): #Checks if player can skip
+                    # User skips, so figure card goes to computer
+                    figure_id, figure_value = self.current_figure
+                    print(f"You skipped. Computer gets the figure card {figure_id} worth {figure_value} points.")
+                    self.players[1].add_score(figure_value)
+                    return None
+                else:
+                    print("You can't skip more than 2 times in a game!")
+
+            user_card = self.players[0].play_card(card_index)
+       return user_card 
+
+ def get_computer_card(self): #5676101
+            
+       return computer_card 
+
     def game_over(self):
         """check if game completion conditions are satisfied(round expired or deck is empty)"""
         return self.round >= self.total_rounds or self.deck.is_empty()
