@@ -31,7 +31,7 @@ class Game:
         for player in self.players:
             player.hand = []
             #Iterate throught each player, then through ranks and then through suits, so that number cards (e.g.: 2C, 2H, 3D, 3S,...) are created for both players
-        for player in enumerate(self.players): 
+        for index, player in enumerate(self.players): 
             for rank in self.deck.ranks:
                 num_cards = []
                 for suit in ['H', 'D' , 'S' , 'C']:
