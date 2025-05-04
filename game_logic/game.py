@@ -30,16 +30,17 @@ class Game:
         # Clear players' hands
         for player in self.players:
             player.hand = []
-            # Iterate throught each player, then through ranks and then through suits, so that number cards (e.g.: 2C, 2H, 3D, 3S,...) are created for both players
-        for index, player in enumerate(self.players):
-            for rank in self.deck.ranks:
+            # Iterate throught each rank, then through suits, so that number cards (e.g.: 2C, 2H, 3D, 3S,...) are created for both players
+        for rank in self.deck.ranks:
                 num_cards = []
                 for suit in ['H', 'D', 'S', 'C']:
                     num_cards.append(rank + suit)
                 # Shuffle for randomness of suit
                 random.shuffle(num_cards)
-                # In each for loop 4 cards of the same rank with all suits are created, so only 2 of those (taken from beginning) are appened to player's hand
-                player.hand.extend(num_cards[:2])
+                # In each for loop 4 cards of the same rank with all suits are created, so only 2 of those (taken from beginning) are appended to player's hand
+                self.players[0].hand.extend(num_cards[:2])
+                # Computer gets the remaining 2 cards
+                self.players[1].hand.extend(num_cards[2:])
 
         for player in self.players:
             # Lambda function was used for sorting
