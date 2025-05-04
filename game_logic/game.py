@@ -49,12 +49,13 @@ class Game:
 
         print("Cards have been dealt; Let the game start!")
 
-    def play_round(self):
+    def play_round(self): #5676101 (90%)
         """play round, both player and computer will draw card and card values will be compared"""
         self.user_round_sum = 0
         self.computer_round_sum = 0
         user = self.players[0]  # 5676101
         computer = self.players[1]
+        
         # The figure cards being drawn 5676101
         figure_card = self.deck.draw_figure_card()
         if not figure_card:
