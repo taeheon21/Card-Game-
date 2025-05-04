@@ -45,8 +45,7 @@ class Game:
         for player in self.players:
             # Lambda function was used for sorting
             # Sorting is done by number(rank) (left to right, 2 to 10)
-            player.hand.sort(key=lambda card: (
-                int(player.get_rank(card))))
+            player.hand.sort(key=lambda card: int(player.get_rank(card)))
 
         print("Cards have been dealt; Let the game start!")
 
