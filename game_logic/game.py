@@ -71,14 +71,17 @@ class Game:
             number_cards = self.deck.redistribute_number_cards()
             self.deal_cards()
 
-        computer_card = computer.hand.pop(0)
+        # Display user's hand (5676101)
+        print("Your hand:", ", ".join(self.players[0].hand))
+        #Extract card from players
         user_card = self.get_user_card()
         if user_card is None:
             return
+
+        computer_card = computer.hand.pop(0)
+        
         rank_user = user.get_rank(user_card)
         rank_computer = computer.get_rank(computer_card)
-        # Display user's hand (5676101)
-        print("Your hand:", ", ".join(self.players[0].hand))
         # Playing a card by user and computer
         print(f"You played: {user_card}")
         print(f"Computer played: {computer_card}")
