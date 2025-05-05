@@ -1,9 +1,10 @@
-#Work To Do: Update scoreboard + Manage multible rounds
-
+#Work To Do: handle specical rules + add skip button + add background audio
 import pygame
 import random
 from game_logic.deck import Deck
 from game_logic.Player import Player
+from game_logic.game import Game
+
 from collections import defaultdict
 import sys # for quiting the game once its over
 
@@ -105,8 +106,6 @@ def get_card_image_path(value, suit):
     suit_str = suit.lower()
     return f"assets/cards/png/{value_str}_of_{suit_str}.png"
 
-displayWelcomeScreen() #Welcome message!
-
 card_spacing = 6
 total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
 start_x = (screen.get_width() - total_width) // 2
@@ -134,8 +133,11 @@ for value in range(2, 11):  # For each value from 2 to 10
 
 player =Player("You")
 computer = Player("Computer")
+
 player.hand = player_cards  # Assign the list of 18 cards
 computer.hand = computer_cards
+player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
+computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
 player_hand = []
 computer_hand = []
@@ -156,7 +158,7 @@ for comp, (value, suit) in enumerate(computer_cards):    # Computer gets every o
 
 
 figure_cards = deck.create_figure_cards() # shuffled list of figure cards(imported from the deck class)
-center_figure = figure_cards.popleft()  # pick one figure card from the top
+center_figure = deck.draw_figure_card()  # pick one figure card from the top
 
 
 #Helper function to turn figure code like 'QD' into a usable image path
@@ -189,144 +191,158 @@ center_figure_card = Card(
     border_color=GOLD                 # Gold border
 )
 
-# The Game loop
-game_is_running = True
-selected_card = None
-computer_card = None
-round_outcome= None
-warning = ""
-warning_timer = 0 
-round_number = 0
-
 round_in_progress = False
 round_ended = False
 round_end_time = 0
+displayWelcomeScreen() #Welcome message!
 
-while game_is_running:
-    screen.fill(green)
+def run_game(center_figure, figure_cards):
+    game_is_running = True
+    selected_card = None
+    computer_card = None
+    round_outcome = None
+    warning = ""
+    warning_timer = 0
 
-    if warning and pygame.time.get_ticks() > warning_timer:
-        warning = ""
+    show_result_until = None
+    round_phase = "waiting_for_play"
+    phase_timer = None
 
-    for action in pygame.event.get(): #checking for any actions a player takes
-        if action.type == pygame.QUIT: # Do they press the 'exit' button?
-            game_is_running = False # quit if yes
-        
-        if action.type == pygame.MOUSEBUTTONDOWN: #Detecting mouse movement
-            mouse_position= pygame.mouse.get_pos()
-            print(mouse_position) 
-            for card in player_hand:
-                if card.rect.collidepoint(mouse_position):
-                    selected_card= card  
-                    print(f"You selected: {selected_card.value} of {selected_card.suit}")
-                    selected_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
-                    if selected_card_str in player.hand:
-                        if selected_card_str in ['2S', '9S']:
-                            player.used_special = True
-                            player.last_special = selected_card_str
-                            player.play_card(selected_card_str)    
-                            player_hand.remove(selected_card)
+    played_player_card = None
+    played_computer_card = None
 
-                        else:
-                            if player.last_special in ['2S','9S'] and selected_card.value in['3', '9']:
-                                warning = "You can't play 3 or 10 after 2S or 9s" # Edit the message later on!
-                                warning_timer = pygame.time.get_ticks() + 8000 
-                                continue
-                            player.play_card(selected_card_str)
-                            player_hand.remove(selected_card)
-                    # Position the selected card near center
-                if selected_card is not None:
-                    selected_card.rect.x = screen.get_width() // 2 - CARD_WIDTH +150
-                    selected_card.rect.y = screen.get_height() // 2
+    game = Game()
+    game.player = player
+    game.computer = computer
 
-                if selected_card is not None and computer_hand:
+    while game_is_running:
+        screen.fill(green)
+
+        if warning and pygame.time.get_ticks() > warning_timer:
+            warning = ""
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_is_running = False
+
+            if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
+                mouse_pos = pygame.mouse.get_pos()
+                
+                for card in player_hand:
+                    if card.rect.collidepoint(mouse_pos):
+                        selected_card = card
+                        selected_card_str = f"{card.value}{card.suit[0].upper()}"
+                        selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
+                        break
+
+                if selected_card:
+                    if selected_card_str not in player.hand:
+                        warning = "Card not in hand!"
+                        warning_timer = pygame.time.get_ticks() + 3000
+                        selected_card = None
+                        continue
+                    # Special card logic (optional)
+                    if selected_card_str in ['2S', '9S']:
+                        player.used_special = True
+                        player.last_special = selected_card_str
+                    else:
+                        if player.last_special in ["2S", "9S"] and selected_card.value in ["3", "9"]:
+                            warning = "You can't play 3 or 10 after 2S or 9S!"
+                            warning_timer = pygame.time.get_ticks() + 3000
+                            selected_card = None
+                            continue
+                        
+                     # Remove from both hands
+                    selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
+                    played_player_card = selected_card  # Save it for drawing
+                    player_hand.remove(selected_card)   # Remove after it's moved
+                    player.play_card(selected_card_str)
+
+                    # Computer's turn
                     computer_card = random.choice(computer_hand)
                     computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
-                    computer.play_card(selected_card_str)
+                    computer_card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                    computer.play_card(computer_card_str)
+                    played_computer_card = computer_card
                     computer_hand.remove(computer_card)
-
-                    # Also Position the computer card near center 
-                    computer_card.rect.x = screen.get_width() // 2 -150
-                    computer_card.rect.y = screen.get_height() // 2
-
-                    break
-                if selected_card and computer_card and round_outcome is None:
-                    player_selected_card = int(selected_card.value)
-                    computer_selected_card = int(computer_card.value)
+                   
+                    round_phase = "cards_revealed"
+                    phase_timer = pygame.time.get_ticks() + 1500
+                    # Resolve round
                     
-                    figure_value = int(center_figure[1] )
-                    #Comparing values:
-                    if player_selected_card> computer_selected_card:
-                        round_outcome= "You win this round!"
-                        player.add_score(figure_value)
-                    elif player_selected_card < computer_selected_card:
-                        round_outcome= "computer wins!"
-                        computer.add_score(figure_value)             
-                    else:
-                        round_outcome = "It's a tie!" 
-                    if player.score >= 91 or computer.score >= 91:
-                        winner = player.name if player.score > computer.score else computer.name
-                        announce_winner(winner)
-                        pygame.display.flip()
-                        pygame.time.wait(10000)
-                        game_is_running = False
-                if round_outcome:
-                    font = pygame.font.SysFont(None, 36)
-                    result_text = font.render(round_outcome, True, GOLD)
-                    screen.blit(result_text, (screen.get_width() // 2 - 100, 250))
-
-                    score_text = font.render(f"You: {player.score} | Computer: {computer.score}", True, WHITE)
-                    screen.blit(score_text, (screen.get_width() // 2 - 120, 290))
-
-                        # Wait and reset for next round
-                    pygame.display.flip()
-                    pygame.time.wait(3000)  # Show results for 3 seconds
-
-                    selected_card = None
-                    computer_card = None
-
-                        # Update next figure card
-                    if figure_cards:
-                        next_figure = figure_cards.popleft()
-                        center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
-                        center_figure_card.image = pygame.transform.scale(center_figure_card.image, (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
-                        center_figure_card.value = next_figure[1]
-                        center_figure = next_figure
-                    else:
-                        game_is_running = False  # No more figure cards left
+        if round_phase == "cards_revealed" and pygame.time.get_ticks() > phase_timer:
+            round_outcome = game.resolve_round(int(selected_card.value), int(computer_card.value), int(center_figure_card.value))
+            round_phase = "result_display"
+            phase_timer = pygame.time.get_ticks() + 1500
                     
-    # Reset for next round
- 
-    for card in player_hand:
-        card.draw(screen)
-    
-    for card in computer_hand:
-        card.draw(screen)
-    
-    center_figure_card.draw(screen) # Draw center figure card
-    
-# draw the played cards 
-    if selected_card:
-        selected_card.draw(screen)
-    if computer_card:
-        computer_card.draw(screen)
+        elif round_phase == "result_display" and pygame.time.get_ticks() > phase_timer:
+            selected_card = None
+            computer_card = None
+            played_player_card = None
+            played_computer_card = None
+            round_outcome = None
 
-    font = pygame.font.SysFont(None, 28)
-    label = font.render("Round Card", True, GOLD)
-    screen.blit(label, (center_figure_card.rect.centerx - 40, center_figure_card.rect.top - 25))
-    
-    if warning:
-        font = pygame.font.SysFont(None, 30)
-        warning_text = font.render(warning, True, (255, 0, 0))  # Red
-        screen.blit(warning_text, (screen.get_width() // 2 - 180, 650))
-    
-    # Draw Scoreboard
-    font = pygame.font.SysFont(None, 32)
-    round_number = 18 - len(player.hand)  # Total number of number-cards per player = 18
-    score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {player.skips_left}"
-    score_text = font.render(score_line, True, WHITE)
-    screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 10))  # Top center
+            if figure_cards:
+                next_figure = figure_cards.popleft()
+                center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
+                center_figure_card.image = pygame.transform.scale(center_figure_card.image, (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                center_figure_card.value = next_figure[1]
+                center_figure = next_figure
+            else:
+                game_is_running = False
+                    
+                    
+                    # Check for win condition
+                    # Updated winner check using Game method
+            if player.score >= 91 or computer.score >= 91:
+                game.declare_winner()  # Handles print logic
+                pygame.display.flip()
+                pygame.time.wait(10000)
+                return
+                    
+            round_phase = "waiting_for_play"
+                     
+        # Draw visual elements
+        for card in player_hand:
+            card.draw(screen)
+        for card in computer_hand:
+            card.draw(screen)
 
-    pygame.display.flip()
+        center_figure_card.draw(screen)
+
+        if played_player_card:
+            played_player_card.draw(screen)
+        if played_computer_card:
+            played_computer_card.draw(screen)
+   
+        # Result message
+        if round_outcome:
+            font = pygame.font.SysFont(None, 36)
+            result_text = font.render(round_outcome, True, GOLD)
+            screen.blit(result_text, (screen.get_width() // 2 - 120, 250))
+
+        # Round label
+        font = pygame.font.SysFont(None, 28)
+        label = font.render("Round Card", True, GOLD)
+        screen.blit(label, (center_figure_card.rect.centerx - 40, center_figure_card.rect.top - 25))
+
+        # Scoreboard
+        font = pygame.font.SysFont(None, 32)
+        round_number = 18 - len(player.hand)
+        score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {player.skips_left}"
+        score_text = font.render(score_line, True, WHITE)
+        screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 10))
+
+        # Warnings
+        if warning:
+            font = pygame.font.SysFont(None, 30)
+            warning_text = font.render(warning, True, (255, 0, 0))
+            screen.blit(warning_text, (screen.get_width() // 2 - 180, 650))
+
+        pygame.display.flip()
+
+        
+
+run_game(center_figure, figure_cards)
 pygame.quit()
 sys.exit()
