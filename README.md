@@ -7,6 +7,7 @@ b. Instructions: Describe how to run your code and provide data input examples t
 it.
 * The User Guide must contain a contribution statement, that is, each member
 declaring the participation of all other members.
+
 git clone https://github.com/taeheon21/Card-Game-.git
 cd Card-Game-
 python PygameUI.py
