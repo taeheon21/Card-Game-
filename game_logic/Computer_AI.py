@@ -3,7 +3,7 @@ import numpy as np
 from game import Game
 from deck import Card
 
-# tree
+# Simple decision tree nodes
 class Node:
     pass
 
@@ -122,19 +122,20 @@ class QLearningAgent:
 
     def update(self, state, action, reward, next_state):
         # compute max next
-        f, h, l, s = next_state
+        f, h, l, s = state
+        fn, hn, ln, sn = next_state
         valid_next = []
-        if f:
-            if h: valid_next.append(0) # high
-            if s: valid_next.append(2) #special
+        if fn:
+            if hn: valid_next.append(0) # high
+            if sn: valid_next.append(2) #special
             valid_next.append(3) #highest
         else:
-            if l: valid_next.append(1) #low
-            if s: valid_next.append(2) # special
+            if ln: valid_next.append(1) #low
+            if sn: valid_next.append(2) # special
             valid_next.append(4) #lowest
-        max_next = max(self.Q[next_state][i] for i in valid_next) if valid_next else 0
-        current = self.Q[state + (action,)]
-        self.Q[state + (action,)] = cur + self.alpha * (reward + self.gamma * max_next - cur)
+        max_next = max(self.Q[fn, hn, ln, sn, i] for i in valid_next) if valid_next else 0 # Max future Q
+        current = self.Q[f, h, l, s, action]
+        self.Q[f, h, l,s, action] = current + self.alpha * (reward + self.gamma * max_next - current)
 
     def act(self, figure, hand):
         state = self.get_state(figure, hand)
