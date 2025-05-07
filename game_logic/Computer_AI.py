@@ -1,6 +1,6 @@
 import pickle
-import numpy as np
 import random
+import numpy as np
 from game import Game
 
 
@@ -81,19 +81,19 @@ def play_choice(choice, game):
 
 
 # Build the decision tree
-root = Node(cond=is_figure_high)
+root = DecisionNode(cond=is_figure_high)
 # figure>=8
-root.left = Node(cond=has_high_cards)
-root.left.left  = Node(action=play_high)
-root.left.right = Node(cond=has_special_card)
-root.left.right.left  = Node(action=play_special)
-root.left.right.right = Node(action=play_highest)
+root.left = DecisionNode(cond=has_high_cards)
+root.left.left  = DecisionNode(action=play_high)
+root.left.right = DecisionNode(cond=has_special_card)
+root.left.right.left  = DecisionNode(action=play_special)
+root.left.right.right = DecisionNode(action=play_highest)
 # figure<8
-root.right = Node(cond=has_low_cards)
-root.right.left  = Node(action=play_low)
-root.right.right = Node(cond=has_special_card)
-root.right.right.left  = Node(action=play_special)
-root.right.right.right = Node(action=play_lowest)
+root.right = DecisionNode(cond=has_low_cards)
+root.right.left  = DecisionNode(action=play_low)
+root.right.right = DecisionNode(cond=has_special_card)
+root.right.right.left  = DecisionNode(action=play_special)
+root.right.right.right = DecisionNode(action=play_lowest)
 
 # Q-Learning agent
 class QLearningAgent:
