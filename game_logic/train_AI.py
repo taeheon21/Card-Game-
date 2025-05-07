@@ -19,7 +19,7 @@ def main():
         game = Game()
 
         # 2) get initial state: figure value and computer hand
-        fv = game.current_figure.value
+        fv = game.current_figure[1]  
         hand = list(game.computer.hand)
         state = agent.get_state(fv, hand)
 
@@ -65,4 +65,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
