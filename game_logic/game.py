@@ -314,7 +314,7 @@ class Game:
 
         # Get tiebreaker cards
         user_card = self.get_user_card()
-        if user_card is None:  # User skipped (shouldn't happen in tiebreaker)
+        if user_card is None:  
             return
 
         computer_card = computer.hand.pop(0)
