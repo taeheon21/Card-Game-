@@ -13,7 +13,7 @@ class Deck:
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
-        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
+        self.nums = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
         self.number_cards = self.create_number_cards()
         self.figure_cards = self.create_figure_cards()
 
@@ -68,10 +68,10 @@ class Deck:
         """
         number_cards = []  # For holding number cards
 
-        # Assuming self.ranks only has '2' to '10' 
-        for val in self.ranks:
+        # Assuming self.nums only has '2' to '10' 
+        for val in self.nums:
             for suit in self.suits:
-                # Creation of cards (suit + rank(val))
+                # Creation of cards (suit + num(val))
                 card = val + suit[0].upper()
                 number_cards.append(card)
         
