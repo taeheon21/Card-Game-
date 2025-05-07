@@ -31,14 +31,17 @@ def main():
         action_name = agent.actions[action_idx]
         play_choice(action_name, computer)
 
+        # 4) play the round and compute reward based on score changes
+        prev_comp = computer.score
+        prev_user = game.players[0].score
+        game.play_round()  
+        comp_gain = computer.score - prev_comp
+        user_gain = game.players[0].score - prev_user
 
-
-        # 4) reward
-        comp_score, player_score = game.resolve_round()
-        if comp_score > player_score:
+        if comp_gain > user_gain:
             reward = 1
             wins += 1
-        elif comp_score < player_score:
+        elif comp_gain < user_gain:
             reward = -1
             losses += 1
         else:
