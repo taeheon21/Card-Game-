@@ -16,6 +16,28 @@ class Deck:
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] #5676101
         self.number_cards = self.create_number_cards()
         self.figure_cards = self.create_figure_cards()
+
+    def my_shuffle(self, cards_to_shuffle): #5667929
+        # my own shuffling algorithm that works pretty well (its just  Fisher-Yates shuffle)
+        total_items = len(cards_to_shuffle)
+    
+        # going backwards through the list
+        idx = total_items
+        while idx > 1:
+            idx -= 1
+        
+            # pick a random position to swap with
+            pos = random.randint(0, idx)
+        
+        # so it dosent swapping with itself
+            if pos != idx:
+                #the swap
+                cards_to_shuffle[idx], cards_to_shuffle[pos] = cards_to_shuffle[pos], cards_to_shuffle[idx]
+    
+  
+        return cards_to_shuffle #5667929
+
+
     def create_figure_cards(self): #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
@@ -35,7 +57,7 @@ class Deck:
                 cards.append((key, value))
 
         # Shuffle the figure cards
-        random.shuffle(cards)
+        cards = self.my_shuffle(cards)
 
         # Return as a deque for efficient popping from front
         return deque(cards)
@@ -53,11 +75,11 @@ class Deck:
                 card = val + suit[0].upper()
                 number_cards.append(card)
         
-        random.shuffle(number_cards)
+        return self.my_shuffle(number_cards)
 
         return number_cards
         
-    def is_empty(self): #Check if figure card deck is empty (5676101)
+    def is_empty(self): #Check if figure card deck is empty (5667929)
         return len(self.figure_cards) == 0
         
     def draw_figure_card(self): #Used for drawing figure cards (5676101)
