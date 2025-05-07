@@ -105,10 +105,10 @@ class Game:
             player.hand = []
 
         # Distribute cards - 2 of each rank to each player with random suits
-        for rank in self.deck.ranks:
+        for num in self.deck.nums:
                 num_cards = []
                 for suit in ['H', 'D', 'S', 'C']:
-                    num_cards.append(rank + suit)
+                    num_cards.append(num + suit)
                 # Shuffle for randomness of suit
                 random.shuffle(num_cards)
 
@@ -118,7 +118,7 @@ class Game:
                 self.players[1].hand.extend(num_cards[2:])
 
         for player in self.players:
-            # Sort cards by rank
+            # Sort cards by number 
             player.hand.sort(key=lambda card: int(player.get_rank(card)))
 
         print("Cards have been dealt; Let the game start!")
@@ -254,12 +254,12 @@ class Game:
         computer.used_special = False
 
         # Get ranks for comparison
-        rank_user = user.get_rank(user_card)
-        rank_computer = computer.get_rank(computer_card)
+        num_user = user.get_num(user_card)
+        num_computer = computer.get_num(computer_card)
 
         # Get number value for player cards
-        value_user = int(user.get_rank(user_card))
-        value_computer = int(computer.get_rank(computer_card))
+        value_user = int(user.get_num(user_card))
+        value_computer = int(computer.get_num(computer_card))
 
         # 12 19 Rule enforced
         self.user_round_sum += value_user
@@ -342,8 +342,8 @@ class Game:
             return  # End tiebreaker after special card
 
         # Get values for comparison and check sum restrictions
-        value_user = int(user.get_rank(user_card))
-        value_computer = int(computer.get_rank(computer_card))
+        value_user = int(user.get_num(user_card))
+        value_computer = int(computer.get_num(computer_card))
 
         self.user_round_sum += value_user
         if self.user_round_sum in [12, 19]:
