@@ -17,6 +17,7 @@ def main():
     for ep in range(episodes):
         # 1) start a new game/round
         game = Game()
+        game.current_figure = game.deck.draw_figure_card() 
 
         # 2) get initial state: figure value and computer hand
         fv = game.current_figure[1]  
