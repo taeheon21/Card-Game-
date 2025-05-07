@@ -115,7 +115,7 @@ class QLearningAgent:
         f = 1 if figure >= 8 else 0
         h = 1 if any(7 <= int(card[:-1]) <= 10 for card in hand) else 0
         l = 1 if any(2 <= int(card[:-1]) <= 4  for card in hand) else 0
-        s = 1 if any(c.code in ['2S', '9S'] for c in hand) else 0
+        s = 1 if any(card in ['2S', '9S'] for card in hand) else 0
         return (f, h, l, s)
 
     def choose(self, state):
