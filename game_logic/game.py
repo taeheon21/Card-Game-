@@ -435,21 +435,24 @@ class Game:
         fig_val = self.current_figure[1]
 
         # 2) player play
-        opp_hand = list(self.players[0].hand)
+        opp_player = self.players[0]
+        opp_hand = list(opp_player.hand)
         opp_choice = opp_choice_fn(fig_val, opp_hand)
-        self.players[0].play_card(opp_choice)
+        opp_player.play_card(opp_choice)
 
         # 3) agent play
-        comp_hand = list(self.players[1].hand)
+        comp_player = self.players[1]
+        comp_hand = list(comp_player.hand)
         comp_choice = ai_choice_fn(fig_val, comp_hand)
-        self.players[1].play_card(comp_choice)
+        comp_player.play_card(comp_choice)
 
         # 4) round
-        prev_comp = self.players[1].score
-        prev_opp = self.players[0].score
-        self.play_round()  # 기존 play_round 로 점수 반영
-        comp_gain = self.players[1].score - prev_comp
-        opp_gain = self.players[0].score - prev_opp
+        prev_comp_score = comp_player.score
+        prev_opp_score = opp_player.score
+
+        self.play_round()
+        comp_gain = comp_player.score - prev_comp_score
+        opp_gain = opp_player.score - prev_opp_score
 
         return comp_gain, opp_gain
 
