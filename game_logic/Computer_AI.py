@@ -3,6 +3,9 @@ import numpy as np
 from game import Game
 from deck import Card
 
+from PygameUI import figure_value
+
+
 # Simple decision tree nodes
 class Node:
     pass
@@ -43,7 +46,7 @@ def has_special_card(game):
     return False
 
 
-# Action helpers
+# Action
 
 def play_high_val(game):
     game.computer.play_high_value_card()
@@ -63,6 +66,20 @@ def play_highest(game):
 
 def play_lowest(game):
     game.computer.play_lowest_value_card()
+
+def play_choice(choice, game):
+    if choice == 'high':
+        game.computer.play_high_value_card()
+    elif choice == 'low':
+        game.computer.play_low_value_card()
+    elif choice == 'special':
+        game.computer.play_special_card()
+    elif choice == 'highest':
+        game.computer.play_highest_value_card()
+    elif choice == 'lowest':
+        game.computer.play_lowest_value_card()
+
+
 
 # Build the decision tree
 root = Node(cond=is_figure_high)
@@ -143,20 +160,25 @@ class QLearningAgent:
         return self.actions[idx]
 
     def load(self, path):
-        with open(path, 'rb') as f:
-            self.Q = pickle.load(f)
+        with open(path, 'rb') as file:
+            self.Q = pickle.load(file)
 
 # Computer AI combining both logic(Tree & Q-learning)
 class ComputerAI:
-    def __init__(self, mode='easy', qpath=None):
+    def __init__(self, mode='easy', Qpath=None):
         self.mode = mode
-
         self.agent = QLearningAgent()
-        if mode in ['normal', 'hard'] and qpath:
-            self.agent.load(qpath)
+        if mode == 'hard' and Qpath:
+            self.agent.load(Qpath)
 
-    def play(self, game):
-        if self.mode == 'easy':
+    def play(self, game: Game):
+        if self.mode == 'easy':  # [Easy mode] computer drews card randomly no logic
+            hand = game.computer.hand
+            choice = random.chocie(hand)
+            game.computer.play_card(choice)
+            return
+
+        if self.mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
             node = root
             while node.action is None:
                 if node.cond(game):
@@ -165,4 +187,16 @@ class ComputerAI:
                     node = node.right
             node.action(game)
             return
+
+        #[Hard Mode] Q-learning
+
+
+        figure_value = game.current_figure.value
+        hand = game.computer.hand
+        choice = self.agent.act(figure_value, hand)
+        play_choice(choice, game.computer)
+
+
+
+
 
