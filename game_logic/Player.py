@@ -19,14 +19,6 @@ class Player: #5676101 (all of it)
             self.hand.remove(card)
             return card
 
-    def auto_play(self):
-
-        #Automatically play the first card in hand (used by AI). returns played card or none if card is empty
-
-        if self.hand:
-         return self.play_card(self.hand[0])
-        else:
-         return None
     def skip_turn(self):
 
         #Skip the current turn if skips are available. Will return trues if successfully skipped , false otherwise.
