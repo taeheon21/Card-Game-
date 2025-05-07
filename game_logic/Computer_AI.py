@@ -1,9 +1,8 @@
 import pickle
 import numpy as np
+import random
 from game import Game
-from deck import Card
 
-from PygameUI import figure_value
 
 
 # Simple decision tree nodes
