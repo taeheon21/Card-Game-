@@ -399,7 +399,8 @@ class Game:
                     if user.skip_turn():  # Checks if player can skip
                         user.used_special = False
                         # User skips, so figure card goes to computer
-                        figure_id, figure_value = self.current_figure
+                        figure_id = self.current_figure[0]
+                        figure_value = self.current_figure[1]
                         print(f"You skipped. Computer gets the figure card {figure_id} worth {figure_value} points.")
                         self.players[1].add_score(figure_value)
                         return None
