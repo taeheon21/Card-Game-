@@ -9,7 +9,7 @@ from game import Game
 class Node:
     pass
 
-class DecisionNode(Node):
+class DecisionNode:
     def __init__(self, cond=None, action=None):
         # cond: to judge, action: to act
         self.cond = cond
@@ -48,23 +48,28 @@ def has_special_card(game):
 # Action
 
 def play_high_val(game):
-    game.computer.play_high_value_card()
+    play_choice('high', game.computer)
+
 
 
 def play_low_val(game):
-    game.computer.play_low_value_card()
+    play_choice('low', game.computer)
 
 
 def play_special(game):
-    game.computer.play_special_card()
+    play_choice('special', game.computer)
+
 
 
 def play_highest(game):
-    game.computer.play_highest_value_card()
+    play_choice('highest', game.computer)
+
+
 
 
 def play_lowest(game):
-    game.computer.play_lowest_value_card()
+    play_choice('lowest', game.computer)
+
 
 def play_choice(choice, game):
     if choice == 'high':
