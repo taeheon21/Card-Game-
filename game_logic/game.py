@@ -183,7 +183,7 @@ class Game:
 
         # Draw figure card
         figure_card = self.deck.draw_figure_card()
-        if not figure_card:
+        if not figure_card: #Taeheon
             print("All figure cards have been exhausted!")
             return
         self.current_figure = figure_card
@@ -279,7 +279,7 @@ class Game:
         # Check for score of 101
         for player in self.players:
             if player.score >= 101:
-                print(f"{player.name} wins with 91 points!")
+                print(f"{player.name} wins with 101 points!")
 
         # Compare number cards (Taeheon)
         if value_user > value_computer:
