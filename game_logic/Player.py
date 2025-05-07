@@ -43,8 +43,8 @@ class Player: #5676101 (all of it)
 
         return card in self.hand
 
-    def get_rank(self, card):
+    def get_num(self, card):
         
-        #Extract the rank from a card string. Example: From '10 of clubs' -> '10'
+        #Extract the number from a card string. Example: From '10 of clubs' -> '10'
 
         return card[:-1]  
