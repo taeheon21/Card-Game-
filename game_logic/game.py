@@ -74,6 +74,7 @@ class Game:
             print(f"This round is tie! Deciding winner by coin flip...")  If we have total 5 rounds I think this codes are unnecessary"""
 '''
 import random 
+from deck import Deck
 
 
 class Game:
