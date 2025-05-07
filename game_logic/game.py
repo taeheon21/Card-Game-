@@ -75,6 +75,7 @@ class Game:
 '''
 import random 
 from deck import Deck
+from Player import Player
 
 
 class Game:
