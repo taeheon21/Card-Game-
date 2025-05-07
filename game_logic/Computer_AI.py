@@ -71,17 +71,33 @@ def play_lowest(game):
     play_choice('lowest', game.computer)
 
 
+
 def play_choice(choice, player):
+    hand = player.hand
+
+    get_num = lambda c: int(player.get_rank(c))
+
     if choice == 'high':
-        player.play_high_value_card()
+        # 7~10
+        highs = [c for c in hand if 7 <= get_num(c) <= 10]
+        card = highs[0] if highs else max(hand, key=get_num)
     elif choice == 'low':
-        player.play_low_value_card()
+        # 2~4
+        lows = [c for c in hand if 2 <= get_num(c) <= 4]
+        card = lows[0] if lows else min(hand, key=get_num)
     elif choice == 'special':
-        player.play_special_card()
+        #
+        specs = [c for c in hand if c in ['2S','9S']]
+        card = specs[0] if specs else random.choice(hand)
     elif choice == 'highest':
-        player.play_highest_value_card()
-    else:
-        player.play_lowest_value_card()
+
+        card = max(hand, key=get_num)
+    else:  # 'lowest'
+        
+        card = min(hand, key=get_num)
+
+    player.play_card(card)
+
 
 
 
