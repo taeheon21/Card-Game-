@@ -14,7 +14,7 @@ class Game:
         self.round = 0  # 5662884 
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
 
-    def start_game(self):
+    def start_game(self):  #5662884
         """starts the game"""
         print("Game is starting...")
         while not self.game_over():
@@ -24,7 +24,7 @@ class Game:
         self.declare_winner()
 
 
-    def play_round(self):
+    def play_round(self): #5662884
         """play round, both player and computer will draw card and card values will be compared"""
         card_player = self.deck.draw_card()
         card_computer = self.deck.draw_card()
@@ -56,12 +56,12 @@ class Game:
                 self.computer.add_score(card_computer)
 
 
-    def game_over(self):
+    def game_over(self): #5662884
         """check if game completion conditions are satisfied(round expired or deck is empty)"""
         return self.round >= self.total_rounds or self.deck.is_empty()
 
 
-    def declare_winner(self):
+    def declare_winner(self): #5662884
         """ declare final winner"""
         print("Game Over!")
         print(f"Your score is {self.player.score}")
