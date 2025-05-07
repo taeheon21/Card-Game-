@@ -212,12 +212,12 @@ class Game:
         print(f"Computer played: {computer_card}")
 
         # Special cards logic (2 of Spades and 9 of Spades)
-        def is_special(card):
+        def special_card(card):
             return card in ('2S', '9S')
 
-        user_special = is_special(user_card)
+        user_special = special_card(user_card)
 
-        computer_special = is_special(computer_card)
+        computer_special = special_card(computer_card)
 
         # If any player played a special card
         if user_special or computer_special:
@@ -323,12 +323,12 @@ class Game:
         print(f"Tiebreaker - Computer played: {computer_card}")
 
         # Check for special cards first
-        def is_special(card):
+        def special_card(card):
             return card in ('2S', '9S')
 
-        user_special = is_special(user_card)
+        user_special = special_card(user_card)
 
-        computer_special = is_special(computer_card)
+        computer_special = special_card(computer_card)
 
         if user_special or computer_special:
             if user_special and computer_special:
