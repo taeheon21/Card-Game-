@@ -17,17 +17,19 @@ def main():
     for ep in range(episodes):
         # 1) start a new game/round
         game = Game()
-        game.current_figure = game.deck.draw_figure_card() 
+        game.current_figure = game.deck.draw_figure_card()
+
+        computer = game.players[1]
 
         # 2) get initial state: figure value and computer hand
-        fv = game.current_figure[1]  
-        hand = list(game.computer.hand)
+        fv = game.current_figure[1]
+        hand = list(computer.hand)
         state = agent.get_state(fv, hand)
 
         # 3) choose an action index
         action_idx = agent.choose(state)
         action_name = agent.actions[action_idx]
-        play_choice(action_name, game.computer)
+        play_choice(action_name, computer)
 
 
 
@@ -45,8 +47,8 @@ def main():
 
 
         # 5) observing next state
-        new_fv = game.current_figure.value
-        new_hand = list(game.computer.hand)
+        new_fv = game.current_figure[1]
+        new_hand = list(computer.hand)
         next_state = agent.get_state(new_fv, new_hand)
 
         # 6) update Q-table
