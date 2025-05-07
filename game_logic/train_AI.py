@@ -32,16 +32,15 @@ def main():
         play_choice(action_name, computer)
 
         # 4) play the round and compute reward based on score changes
-        prev_comp = computer.score
-        prev_user = game.players[0].score
-        game.play_round()  
-        comp_gain = computer.score - prev_comp
-        user_gain = game.players[0].score - prev_user
+        comp_gain, opp_gain = game.simulate_round(
+            agent.act,  
+            lambda fv, hand: random.choice(hand)  
+        )
 
-        if comp_gain > user_gain:
+        if comp_gain > opp_gain:
             reward = 1
             wins += 1
-        elif comp_gain < user_gain:
+        elif comp_gain < opp_gain:
             reward = -1
             losses += 1
         else:
