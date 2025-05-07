@@ -29,12 +29,12 @@ def main():
         # 3) choose an action index
         action_idx = agent.choose(state)
         action_name = agent.actions[action_idx]
-        play_choice(action_name, computer)
+        
 
         # 4) play the round and compute reward based on score changes
         comp_gain, opp_gain = game.simulate_round(
-            agent.act,  
-            lambda fv, hand: random.choice(hand)  
+            agent.act,
+            lambda fv, hand: random.choice(hand)
         )
 
         if comp_gain > opp_gain:
