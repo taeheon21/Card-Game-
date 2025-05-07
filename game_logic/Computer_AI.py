@@ -71,17 +71,17 @@ def play_lowest(game):
     play_choice('lowest', game.computer)
 
 
-def play_choice(choice, game):
+def play_choice(choice, player):
     if choice == 'high':
-        game.computer.play_high_value_card()
+        player.play_high_value_card()
     elif choice == 'low':
-        game.computer.play_low_value_card()
+        player.play_low_value_card()
     elif choice == 'special':
-        game.computer.play_special_card()
+        player.play_special_card()
     elif choice == 'highest':
-        game.computer.play_highest_value_card()
-    elif choice == 'lowest':
-        game.computer.play_lowest_value_card()
+        player.play_highest_value_card()
+    else:
+        player.play_lowest_value_card()
 
 
 
