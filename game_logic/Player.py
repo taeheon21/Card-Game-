@@ -1,4 +1,4 @@
-class Player: #5676101 (all of it)
+class Player: #5676101 (all of it, except def get_rank)
 
     #Represents a player in the card game and tracks the player's hand, score, and special abilities like skip turns.
 #For use when programming cpu as boolean (probably): #self.human = human  # Check whether this is a human or AI player
@@ -48,3 +48,9 @@ class Player: #5676101 (all of it)
         #Extract the number from a card string. Example: From '10 of clubs' -> '10'
 
         return card[:-1]  
+
+    def get_rank(self, card): # 5662884 (I add these codes to run train_AI.py)
+        rank_str = card[:-1]  # 10H' -> '10', '2S' -> '2'
+        return int(rank_str)  # change into interger
+
+  
