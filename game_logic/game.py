@@ -11,7 +11,7 @@ class Game:
         self.deck = Deck()
         self.player = Player("you")
         self.computer = Player("computer")
-        self.round = 0  # 5662884 
+        self.round = 0  # 5662884
         self.total_rounds = 5  # this is new but it might make the game quicker to play (we dont need it)
 
     def start_game(self):  #5662884
@@ -73,7 +73,7 @@ class Game:
     """ else:
             print(f"This round is tie! Deciding winner by coin flip...")  If we have total 5 rounds I think this codes are unnecessary"""
 '''
-import random 
+import random
 from deck import Deck
 from Player import Player
 
@@ -120,7 +120,7 @@ class Game:
                 self.players[1].hand.extend(num_cards[2:])
 
         for player in self.players:
-            # Sort cards by number 
+            # Sort cards by number
             player.hand.sort(key=lambda card: int(player.get_rank(card)))
 
         print("Cards have been dealt; Let the game start!")
@@ -316,7 +316,7 @@ class Game:
 
         # Get tiebreaker cards
         user_card = self.get_user_card()
-        if user_card is None:  
+        if user_card is None:
             return
 
         computer_card = computer.hand.pop(0)
@@ -430,6 +430,29 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
+    def simulate_round(self, ai_choice_fn, opp_choice_fn): # taeheon
+        # 1) get figure card
+        fig_val = self.current_figure[1]
+
+        # 2) player play
+        opp_hand = list(self.players[0].hand)
+        opp_choice = opp_choice_fn(fig_val, opp_hand)
+        self.players[0].play_card(opp_choice)
+
+        # 3) agent play
+        comp_hand = list(self.players[1].hand)
+        comp_choice = ai_choice_fn(fig_val, comp_hand)
+        self.players[1].play_card(comp_choice)
+
+        # 4) round
+        prev_comp = self.players[1].score
+        prev_opp = self.players[0].score
+        self.play_round()  # 기존 play_round 로 점수 반영
+        comp_gain = self.players[1].score - prev_comp
+        opp_gain = self.players[0].score - prev_opp
+
+        return comp_gain, opp_gain
+
     def game_over(self): #Taeheon
         #Check if game completion conditions are satisfied(round expired or deck is empty)
         for player in self.players:
@@ -449,7 +472,6 @@ class Game:
             print(f"Computer wins the game")
         else:
             print(f"The game is a tie!")
-
 
 
 
