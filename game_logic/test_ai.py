@@ -15,7 +15,7 @@ def simulate_mode(mode, rounds=5, qpath='q_table.pkl'):
         game = Game()
         # Draw figure card for this round
         game.current_figure = game.deck.draw_figure_card()
-        comp = game.playerss[1]
+        comp = game.players[1]
 
         # Capture hand before play
         hand_before = list(comp.hand)
