@@ -6,6 +6,25 @@ from game import Game
 # train_AI.py
 # This script runs Q-learning training for the ComputerAI (hard mode)
 
+def choose_card_by_action(action, hand, get_rank):
+    """Map an action name to an actual card pick from hand."""
+    # hand: list of strings like '10H'; get_rank(card)->int
+    if action == 'high':
+        highs = sorted([c for c in hand if 7 <= get_rank(c) <= 10], key=get_rank)
+        return highs[0] if highs else max(hand, key=get_rank)
+    if action == 'mid':
+        mids = sorted([c for c in hand if 5 <= get_rank(c) <= 7], key=get_rank)
+        return mids[0] if mids else min(hand, key=get_rank)
+    if action == 'low':
+        lows = sorted([c for c in hand if 2 <= get_rank(c) <= 4], key=get_rank, reverse=True)
+        return lows[0] if lows else min(hand, key=get_rank)
+    if action == 'special':
+        specs = [c for c in hand if c in ['2S','9S']]
+        return specs[0] if specs else random.choice(hand)
+    if action == 'highest':
+        return max(hand, key=get_rank)
+    # lowest
+    return min(hand, key=get_rank)
 
 
 def main():
@@ -35,31 +54,25 @@ def main():
 
         # 3) choose an action index
         action_name = agent.act(fv, hand)
-        comp_card = choose_card_by_action(action_name,
-                                          computer.hand,
-                                          player.get_rank)
+        comp_card = choose_card_by_action(action_name, computer.hand, computer.get_rank)
         computer.play_card(comp_card)
 
 
         # 4) play the round and compute reward based on score changes
-        opp_num = int(opp_card[:-1])
-        comp_num = int(comp_card[:-1])
-        if opp_num > comp_num:
-            reward = -1
-            losses += 1
-        elif opp_num < comp_num:
-            reward = 1
-            wins += 1
+        opp_val = int(opp_card[:-1])
+        comp_val = int(comp_card[:-1])
+        if opp_val > comp_val:
+            reward, losses = -1, losses + 1
+        elif opp_val < comp_val:
+            reward, wins = 1, wins + 1
         else:
-            # tie -> random
-            tie_opp = random.choice(player.hand)
-            tie_comp = random.choice(computer.hand)
-            if int(tie_opp[:-1]) >= int(tie_comp[:-1]):
-                reward = -1
-                losses += 1
+            # tie → random tiebreaker
+            t_opp = random.choice(human.hand)
+            t_comp = random.choice(computer.hand)
+            if int(t_opp[:-1]) >= int(t_comp[:-1]):
+                reward, losses = -1, losses + 1
             else:
-                reward = 1
-                wins += 1
+                reward, wins = 1, wins + 1
 
 
         # 5) observing next state
@@ -67,9 +80,10 @@ def main():
         new_hand = list(computer.hand)
         next_state = agent.get_state(new_fv, new_hand)
 
-        # 6) update Q-table
-        action_idx = agent.actions.index(action_name)
-        agent.update(state, action_idx, reward, next_state)
+        agent.update(state,
+                     agent.actions.index(action_name),
+                     reward,
+                     next_state)
 
     #  save the trained Q-table for hard mode
     with open('q_table.pkl', 'wb') as f:
