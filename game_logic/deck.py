@@ -6,10 +6,9 @@ FIGURE_VALUES = {
 }
 
 class Deck:
-    """a card deck for the Get 'Em game containing numbers 2-10 (four copies each)."""
+    # A card deck for the Get 'Em game containing numbers 2-10 (four copies each)
 
     def __init__(self):
-        #suits 
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
         #Figure cards (Ace, King, Queen, Jack)
         self.figures = ['A', 'K', 'Q', 'J'] #5662884
