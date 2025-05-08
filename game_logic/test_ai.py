@@ -55,6 +55,8 @@ def main():
         print(f"You played: {human_card}")
 
         # Computer play
+        # Show computer's hand before its move
+        print("Computer hand:", ", ".join(comp.hand))
         before = set(comp.hand)
         ai.play(game)
         played = before - set(comp.hand)
