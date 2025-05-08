@@ -37,12 +37,6 @@ class Player: #5676101 (all of it, except def get_rank)
         print(f"{self.name} gained {value} points!")
         return value
 
-    def has_card(self, card):
-
-        #Check if the player has a specific card in hand. Returns true if the card is in hand
-
-        return card in self.hand
-
     def get_num(self, card):
         
         #Extract the number from a card string. Example: From '10 of clubs' -> '10'
