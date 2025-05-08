@@ -430,37 +430,7 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
-    def simulate_round(self, ai_choice_fn, opp_choice_fn): # taeheon
-        # 1) get figure card
-        fig_val = self.current_figure[1]
-
-        # 2) player play
-        opp = self.players[0]
-        opp_card = opp_choice_fn(fig_val, list(opp.hand))
-        opp.play_card(opp_card)
-
-        # 3) agent play
-        comp = self.players[1]
-        comp_card = ai_choice_fn(fig_val, list(comp.hand))
-        comp.play_card(comp_card)
-
-        # 4) round
-        if int(opp_card[:-1]) > int(comp_card[:-1]):
-            opp.score += fig_val
-            return 0, fig_val
-        elif int(opp_card[:-1]) < int(comp_card[:-1]):
-            comp.score += fig_val
-            return fig_val, 0
-        else:
-            # tie
-            tie_opp = random.choice(opp.hand)
-            tie_comp = random.choice(comp.hand)
-            if int(tie_opp[:-1]) >= int(tie_comp[:-1]):
-                opp.score += fig_val
-                return 0, fig_val
-            else:
-                comp.score += fig_val
-                return fig_val, 0
+    
 
     def game_over(self): #Taeheon
         #Check if game completion conditions are satisfied(round expired or deck is empty)
