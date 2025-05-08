@@ -192,7 +192,7 @@ class ComputerAI:
             self.agent.load(Qpath)
 
     def play(self, game: Game):
-        comp = game.player[1]
+        comp = game.players[1]
 
         if self.mode == 'easy':  # [Easy mode] computer drews card randomly no logic
             card = random.choice(comp.hand)
@@ -215,8 +215,8 @@ class ComputerAI:
         play_choice(choice, comp)
 
 
-        
-        
+
+
 
 
 
