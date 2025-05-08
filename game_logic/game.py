@@ -121,7 +121,7 @@ class Game:
 
         for player in self.players:
             # Sort cards by number
-            player.hand.sort(key=lambda card: int(player.get_rank(card)))
+            player.hand.sort(key=lambda card: int(player.get_num(card)))
 
         print("Cards have been dealt; Let the game start!")
 
