@@ -77,7 +77,7 @@ class Deck:
 
         return number_cards
         
-    def is_empty(self): #Check if figure card deck is empty (5667929)
+    def is_empty(self): #Check if figure card deck is empty (5676101)
         return len(self.figure_cards) == 0
         
     def draw_figure_card(self): #Used for drawing figure cards (5676101)
