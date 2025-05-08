@@ -93,7 +93,7 @@ def play_choice(choice, player):
 
         card = max(hand, key=get_num)
     else:  # 'lowest'
-        
+
         card = min(hand, key=get_num)
 
     player.play_card(card)
@@ -192,29 +192,31 @@ class ComputerAI:
             self.agent.load(Qpath)
 
     def play(self, game: Game):
+        comp = game.player[1]
+
         if self.mode == 'easy':  # [Easy mode] computer drews card randomly no logic
-            hand = game.computer.hand
-            choice = random.chocie(hand)
-            game.computer.play_card(choice)
+            card = random.choice(comp.hand)
+            comp.play_card(card)
             return
 
         if self.mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
             node = root
             while node.action is None:
-                if node.cond(game):
-                    node = node.left
-                else:
-                    node = node.right
+                node = node.left if node.cond(game) else node.right
             node.action(game)
             return
 
+
         #[Hard Mode] Q-learning
 
+        fv = game.current_figure[1]
+        hand = comp.hand
+        choice = self.agent.act(fv, hand)
+        play_choice(choice, comp)
 
-        figure_value = game.current_figure.value
-        hand = game.computer.hand
-        choice = self.agent.act(figure_value, hand)
-        play_choice(choice, game.computer)
+
+        
+        
 
 
 
