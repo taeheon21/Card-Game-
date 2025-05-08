@@ -4,7 +4,7 @@
 import random
 from Computer_AI import ComputerAI
 from game import Game
-import random
+
 
 MODE_MAP = {'1': 'easy', '2': 'normal', '3': 'hard'}
 
