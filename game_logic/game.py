@@ -171,7 +171,6 @@ class Game:
             if not comp_has_three_or_ten:
                 print("Computer doesn't have 3s or 10s after using special cards, therefore computer skips this round!")
 
-                # Resetting the bool value so it doesn't affect the next turn
                 computer.used_special = False
 
                 # Player gets card
@@ -206,9 +205,9 @@ class Game:
         user_card = self.get_user_card()
         if user_card is None:  # User skipped (part of error fixing)
             return
-
-        computer_card = computer.hand.pop(0)
-
+        '''
+        computer_card = computer.hand.pop(0)  (============================) This is a highlight for tomorrow
+        '''
         # Display cards played
         print(f"You played: {user_card}")
         print(f"Computer played: {computer_card}")
@@ -259,7 +258,7 @@ class Game:
         user.used_special = False
         computer.used_special = False
 
-        # Get ranks for comparison
+        # Get numbers for comparison
         num_user = user.get_num(user_card)
         num_computer = computer.get_num(computer_card)
 
@@ -287,7 +286,7 @@ class Game:
             if player.score >= 101:
                 print(f"{player.name} wins with 101 points!")
 
-        # Compare number cards (Taeheon)
+        # Compare number cards (Taeheon&Alexander)
         if value_user > value_computer:
             print("You win this round!")
             user.add_score(figure_value)
@@ -318,9 +317,9 @@ class Game:
         user_card = self.get_user_card()
         if user_card is None:
             return
-
-        computer_card = computer.hand.pop(0)
-
+        '''
+        computer_card = computer.hand.pop(0) ----------(Again, for tomorrow)
+        '''
         print(f"Tiebreaker - You played: {user_card}")
         print(f"Tiebreaker - Computer played: {computer_card}")
 
@@ -334,7 +333,6 @@ class Game:
 
         if user_special or computer_special:
             if user_special and computer_special:
-                # Both played special cards - 9S has priority
                 if user_card == '9S' and computer_card != '9S':
                     print("You win the tiebreaker by playing special card 9 of Spades!")
                     user.add_score(figure_value)
@@ -342,11 +340,9 @@ class Game:
                     print("Computer wins the tiebreaker by playing special card 9 of Spades!")
                     computer.add_score(figure_value)
             elif user_special:
-                # Only user played special card
                 print(f"You win the tiebreaker by playing special card {user_card}!")
                 user.add_score(figure_value)
             else:
-                # Only computer played special card
                 print(f"Computer wins the tiebreaker by playing special card {computer_card}!")
                 computer.add_score(figure_value)
             return  # End tiebreaker after special card
