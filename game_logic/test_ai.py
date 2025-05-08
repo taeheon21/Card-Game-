@@ -4,6 +4,7 @@
 import random
 from Computer_AI import ComputerAI
 from game import Game
+import random
 
 MODE_MAP = {'1': 'easy', '2': 'normal', '3': 'hard'}
 
@@ -21,49 +22,52 @@ def main():
     qpath = 'q_table.pkl' if mode == 'hard' else None
     ai = ComputerAI(mode=mode, Qpath=qpath)
 
-    # Play 5 rounds
-    for rnd in range(1, 6):
-        print(f"\n--- Round {rnd} ---")
+    # 3) Play multiple rounds
+    rounds = 5
+    for rnd in range(1, rounds + 1):
+        print(f"--- Round {rnd} ---")
         game = Game()
-        # Draw figure card
+        # draw figure card
         game.current_figure = game.deck.draw_figure_card()
 
         human = game.players[0]
         comp = game.players[1]
 
-        # Show state
+        # show figure
         fig_code, fig_val = game.current_figure
-        print(f"Figure card on the table: {fig_code} (value {fig_val})")
+        print(f"Figure card: {fig_code} (value {fig_val})")
+
+        # show human hand
         print("Your hand:")
         for idx, card in enumerate(human.hand):
-            print(f"{idx}: {card}")
+            print(f" {idx}: {card}")
 
-        # Human play
+        # human selects card
         while True:
-            sel = input(f"Choose a card index (0-{len(human.hand)-1}): ")
+            sel = input(f"Choose a card index (0-{len(human.hand) - 1}): ")
             if not sel.isdigit():
-                print("Please enter a number.")
+                print("Enter a number.")
                 continue
             idx = int(sel)
             if 0 <= idx < len(human.hand):
                 human_card = human.hand[idx]
                 human.play_card(human_card)
                 break
-            else:
-                print("Index out of range.")
-
+            print("Index out of range.")
         print(f"You played: {human_card}")
 
-        # Computer play
-        # Show computer's hand before its move
-        print("Computer hand:", ", ".join(comp.hand))
+        # show computer hand
+        print("Computer hand before play:")
+        print(", ".join(comp.hand))
+
+        # computer plays
         before = set(comp.hand)
         ai.play(game)
         played = before - set(comp.hand)
         comp_card = played.pop() if played else None
         print(f"Computer played: {comp_card}")
 
-        # Determine winner
+        # determine winner
         hnum = int(human_card[:-1])
         cnum = int(comp_card[:-1])
         if hnum > cnum:
@@ -72,8 +76,10 @@ def main():
             print("Computer wins this round.")
         else:
             print("It's a tie!")
+        print()
 
-    print("\nAll rounds completed.")
+    print(f"All {rounds} rounds completed.")
+
 
 if __name__ == '__main__':
     main()
