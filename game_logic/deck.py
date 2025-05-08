@@ -68,7 +68,6 @@ class Deck:
         """
         number_cards = []  # For holding number cards
 
-        # Assuming self.nums only has '2' to '10' 
         for val in self.nums:
             for suit in self.suits:
                 # Creation of cards (suit + num(val))
