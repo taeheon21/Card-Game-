@@ -67,7 +67,7 @@ def main():
             reward, wins = 1, wins + 1
         else:
             # tie → random tiebreaker
-            t_opp = random.choice(human.hand)
+            t_opp = random.choice(player.hand)
             t_comp = random.choice(computer.hand)
             if int(t_opp[:-1]) >= int(t_comp[:-1]):
                 reward, losses = -1, losses + 1
