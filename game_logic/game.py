@@ -158,7 +158,7 @@ class Game:
                     computer.add_score(fig_card_value)
                     print(f"Computer gets the figure card {fig_card_id} worth {fig_card_value} points.")
 
-                return  # Player skips their turn here
+                return  
 
         if computer.used_special:
             # The same rule applies to computer
