@@ -1,6 +1,6 @@
-#a new deck mid-game (e.g. redistributing):
-# game.deck.redistribute_number_cards()
-
+'''a new deck mid-game (e.g. redistributing):
+ game.deck.redistribute_number_cards()
+'''
 import pygame
 import random
 import sys # for quiting the game once its over
