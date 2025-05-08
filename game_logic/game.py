@@ -435,23 +435,32 @@ class Game:
         fig_val = self.current_figure[1]
 
         # 2) player play
-        opp_hand = list(self.players[0].hand)
-        opp_choice = opp_choice_fn(fig_val, opp_hand)
-        self.players[0].play_card(opp_choice)
+        opp = self.players[0]
+        opp_card = opp_choice_fn(fig_val, list(opp.hand))
+        opp.play_card(opp_card)
 
         # 3) agent play
-        comp_hand = list(self.players[1].hand)
-        comp_choice = ai_choice_fn(fig_val, comp_hand)
-        self.players[1].play_card(comp_choice)
+        comp = self.players[1]
+        comp_card = ai_choice_fn(fig_val, list(comp.hand))
+        comp.play_card(comp_card)
 
         # 4) round
-        prev_comp = self.players[1].score
-        prev_opp = self.players[0].score
-        self.play_round()  # 기존 play_round 로 점수 반영
-        comp_gain = self.players[1].score - prev_comp
-        opp_gain = self.players[0].score - prev_opp
-
-        return comp_gain, opp_gain
+        if int(opp_card[:-1]) > int(comp_card[:-1]):
+            opp.score += fig_val
+            return 0, fig_val
+        elif int(opp_card[:-1]) < int(comp_card[:-1]):
+            comp.score += fig_val
+            return fig_val, 0
+        else:
+            # tie
+            tie_opp = random.choice(opp.hand)
+            tie_comp = random.choice(comp.hand)
+            if int(tie_opp[:-1]) >= int(tie_comp[:-1]):
+                opp.score += fig_val
+                return 0, fig_val
+            else:
+                comp.score += fig_val
+                return fig_val, 0
 
     def game_over(self): #Taeheon
         #Check if game completion conditions are satisfied(round expired or deck is empty)
