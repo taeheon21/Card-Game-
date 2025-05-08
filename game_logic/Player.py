@@ -13,7 +13,7 @@ class Player: #5676101 (all of it, except def get_rank)
 
     def play_card(self, card):
         
-        #Play a card from the player's hand and raises ValueError
+        #Play a card from the player's hand
         
         if card in self.hand:
             self.hand.remove(card)
