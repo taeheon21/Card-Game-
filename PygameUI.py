@@ -334,7 +334,7 @@ def run_game(center_figure, figure_cards, ai):
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
 
-                for card in player_hand:
+                for card in ui_player_cards:
                     if card.rect.collidepoint(mouse_pos):
                         selected_card = card
                         selected_card_str = f"{card.value}{card.suit[0].upper()}"
@@ -361,16 +361,16 @@ def run_game(center_figure, figure_cards, ai):
                     # Remove from both hands
                     selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
                     played_player_card = selected_card  # Save it for drawing
-                    player_hand.remove(selected_card)  # Remove after it's moved
+                    ui_player_cards.remove(selected_card)  # Remove after it's moved
                     player.play_card(selected_card_str)
 
                     # Replace string hand with card-like objects for the AI logic
                     # 🔁 UPDATE the AI's string hand (AFTER visual hand has been changed)
                     game.computer.hand = [f"{card.value}{card.suit[0].upper()}"
-                                          for card in computer_hand]
+                                          for card in ui_computer_cards]
                     print("🔍 AI hand before playing:", game.computer.hand)
                     print("🃏 UI computer_hand (visible):",
-                          [f"{card.value}{card.suit[0].upper()}" for card in computer_hand])
+                          [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards])
 
                     game.current_figure = center_figure
                     computer_card_obj = ai.play(game)
@@ -382,12 +382,12 @@ def run_game(center_figure, figure_cards, ai):
                     else:
                         computer_card_str = None
                     # 👇 Find the matching Card object from computer_hand
-                    for card in computer_hand:
+                    for card in ui_computer_cards:
                         card_code = f"{card.value}{card.suit[0].upper()}"
                         if card_code == computer_card_str:
                             computer_card = card
                             played_computer_card = card
-                            computer_hand.remove(card)
+                            ui_computer_cards.remove(card)
                             card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
                             break
 
