@@ -18,10 +18,10 @@ class DecisionNode:
 # Condition
 
 def is_figure_high(game):
-    return game.current_figure.value >= 8
+    return game.current_figure[1] >= 8
 
 def is_figure_mid(game):
-    v = game.current_figure.value
+    v = game.current_figure[1]
     return 5 <= v <= 8
 
 
