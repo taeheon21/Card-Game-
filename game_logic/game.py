@@ -287,7 +287,7 @@ class Game:
                 for suit in ['H', 'D', 'S', 'C']:
                     num_cards.append(num + suit)
                 # Shuffle for randomness of suit
-                random.shuffle(num_cards)
+                self.deck.my_shuffle(num_cards)
 
                 # Player 1 gets the first 2 cards
                 self.players[0].hand.extend(num_cards[:2])
