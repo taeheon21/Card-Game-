@@ -1,7 +1,7 @@
 import pickle
 import random
 import numpy as np
-from game import Game
+from game_logic.game import Game
 
 
 
@@ -114,6 +114,7 @@ def play_choice(choice, player):
         card = min(hand, key=get_num)
 
     player.play_card(card)
+    return card  # UI return the card played
 
 
 
@@ -217,7 +218,7 @@ class ComputerAI:
         if self.mode == 'easy':  # [Easy mode] computer drews card randomly no logic
             card = random.choice(comp.hand)
             comp.play_card(card)
-            return
+            return card
 
         if self.mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
             node = root
