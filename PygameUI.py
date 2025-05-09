@@ -237,7 +237,7 @@ for idx, (value, suit) in enumerate(computer_cards):  # Computer gets every odd-
     image_path = get_card_image_path(value, suit)
     ui_computer_cards.append(Card(x, y, value, suit, image_path))
 # Update AI Player hand with string version
-computer.hand = computer_string_hand
+#computer.hand = computer_string_hand
 ai = ComputerAI(mode=difficulty)
 
 figure_cards = deck.create_figure_cards()  # shuffled list of figure cards(imported from the deck class)
