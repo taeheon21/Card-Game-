@@ -27,7 +27,8 @@ def is_figure_mid(game):
 
 def has_high_cards(game):
     for c in game.computer.hand:
-        if 7 <= c.value <= 10:
+
+        if 7 <= int(c[:-1]) <= 10:
             return True
     return False
 
@@ -42,14 +43,14 @@ def has_mid_cards(game):
 
 def has_low_cards(game):
     for c in game.computer.hand:
-        if 2 <= c.value <= 4:
+        if 2 <= int(c[:-1]) <= 4:
             return True
     return False
 
 
 def has_special_card(game):
     for c in game.computer.hand:
-        if c.code in ['2S', '9S']:
+        if c in ['2S', '9S']:
             return True
     return False
 
