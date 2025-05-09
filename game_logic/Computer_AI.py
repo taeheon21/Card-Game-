@@ -221,7 +221,7 @@ class ComputerAI:
             comp.play_card(card)
             return card
 
-        elif mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
+        elif mode == 'normal': # [Normal mode] Computer uses tree data structure and decides
             node = root
             while node.action is None:
                 node = node.left if node.cond(game) else node.right
