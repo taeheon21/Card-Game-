@@ -1,4 +1,3 @@
-#Work To Do: handle specical rules + add background audio
 import pygame
 import random
 from game_logic.deck import Deck
