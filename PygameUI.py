@@ -209,9 +209,8 @@ game = Game()
 game.player = player
 game.computer = computer
 
-player_hand = []
-computer_hand = []
-computer_string_hand = []  # for AI
+game.players = [game.player, game.computer]
+computer_string_hand = [str(card) for card in game.computer.hand] # for AI
 
 # Fill player and computer hands
 for plyer, (value, suit) in enumerate(player_cards):
