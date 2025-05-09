@@ -1,5 +1,6 @@
 # test_ai_interactive.py
 # Console-based interactive test for ComputerAI modes
+#!!! "python -m game_logic.test_ai" type this to run code in vsc terminal
 
 import random
 from .Computer_AI import ComputerAI
