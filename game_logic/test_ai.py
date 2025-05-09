@@ -2,8 +2,8 @@
 # Console-based interactive test for ComputerAI modes
 
 import random
-from .Computer_AI import ComputerAI
-from .game import Game
+from Computer_AI import ComputerAI
+from game import Game
 
 
 MODE_MAP = {'1': 'easy', '2': 'normal', '3': 'hard'}
