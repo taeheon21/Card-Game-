@@ -1,4 +1,4 @@
-#Work To Do: handle specical rules + add background audio
+# Work To Do: handle specical rules + add background audio
 import pygame
 import random
 from game_logic.deck import Deck
@@ -7,7 +7,7 @@ from game_logic.game import Game
 from game_logic.Computer_AI import ComputerAI
 
 from collections import defaultdict
-import sys # for quiting the game once its over
+import sys  # for quiting the game once its over
 
 # === Game Constants ===5667929
 pygame.init()
@@ -15,7 +15,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 720
 BUTTON_WIDTH, BUTTON_HEIGHT = 120, 40
 MARGIN, FPS = 20, 30
 
-# === Colors === 
+# === Colors ===
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 150, 0)
@@ -29,18 +29,21 @@ GOLD = (255, 215, 0)
 
 # poker table colour
 green = (33, 124, 66)
+
+
 class GameUI:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Get 'Em")
+
     def displayWelcomeScreen(self):
         self.screen.fill(green)
         font = pygame.font.SysFont(None, 40)
 
-        welcome_message= ["\n****** Get 'Em Card Game ******",
-        "You vs Computer - good luck!",
-            "Highest card wins each round - simple!",
-        "Press key to start"]
+        welcome_message = ["\n****** Get 'Em Card Game ******",
+                           "You vs Computer - good luck!",
+                           "Highest card wins each round - simple!",
+                           "Press key to start"]
 
         for i, line in enumerate(welcome_message):
             text = font.render(line, True, WHITE)
@@ -56,27 +59,28 @@ class GameUI:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    waiting = False 
+                    waiting = False
+
     def select_difficulty_screen(self):
         """Displays a screen where the player chooses the AI difficulty level."""
         self.screen.fill(green)
         font_title = pygame.font.SysFont(None, 48)
         font_button = pygame.font.SysFont(None, 40)
 
-    # Title
+        # Title
         title_text = "Choose AI Difficulty"
         title_surf = font_title.render(title_text, True, WHITE)
         title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 100))
         self.screen.blit(title_surf, title_rect)
 
-    # Define buttons
+        # Define buttons
         levels = ["Easy", "Normal", "Hard"]
         buttons = []
         for i, level in enumerate(levels):
             btn_rect = pygame.Rect(440, 200 + i * 100, 280, 60)
             buttons.append((btn_rect, level))
 
-    # Draw buttons
+        # Draw buttons
         for rect, label in buttons:
             pygame.draw.rect(self.screen, BLUE, rect)
             label_surf = font_button.render(label, True, WHITE)
@@ -85,7 +89,7 @@ class GameUI:
 
         pygame.display.flip()
 
-    # Wait for user to click a button
+        # Wait for user to click a button
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -96,69 +100,72 @@ class GameUI:
                         if rect.collidepoint(event.pos):
                             return level.lower()
 
+
 game_ui = GameUI()
 game_ui.displayWelcomeScreen()
 difficulty = game_ui.select_difficulty_screen()
 ai = ComputerAI(mode=difficulty)
+
 
 def announce_winner(champion):
     """tells everyone who won at the end"""
     # trophy emoji makes it more apiling
     print(f"\n🏆 WINNER: {champion}!! 🏆")
     # extra line just because
-    print("Thanks for playing!\n") 
+    print("Thanks for playing!\n")
 
-#Creating a window(The playing area):
+
+# Creating a window(The playing area):
 screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
 
-#coloring the playing area
+# coloring the playing area
 green = (10, 110, 10)
 
-
-#cards size and colour
+# cards size and colour
 CARD_WIDTH = 60
 CARD_HEIGHT = 90
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GOLD = (255, 215, 0)
 
-#figure cards size
+# figure cards size
 FIGURE_CARD_WIDTH = 70
 FIGURE_CARD_HEIGHT = 105
 
 
 class Card:
-    def __init__(self, position_x, position_y ,value,suit=None,image_filename=None,width=CARD_WIDTH, height=CARD_HEIGHT, border_color=BLACK):
-        #set the card position and size relative to the screen
+    def __init__(self, position_x, position_y, value, suit=None, image_filename=None, width=CARD_WIDTH,
+                 height=CARD_HEIGHT, border_color=BLACK):
+        # set the card position and size relative to the screen
         self.rect = pygame.Rect(position_x, position_y, width, height)
-        
-        self.value = value #stores card's value
-        self.suit = suit    #tores card's suit
-        self.border_color = border_color 
 
-        #load image, if not found, create a fallback drawing (backup case)
+        self.value = value  # stores card's value
+        self.suit = suit  # tores card's suit
+        self.border_color = border_color
+
+        # load image, if not found, create a fallback drawing (backup case)
         if image_filename is not None:
             self.image = pygame.image.load(image_filename)
             self.image = pygame.transform.scale(self.image, (CARD_WIDTH, CARD_HEIGHT))
         else:
             self.image = None
 
-    def draw(self, screen): 
+    def draw(self, screen):
 
         # Create a slightly bigger golden rectangle for figure cards
         if self.border_color == (255, 215, 0):  # GOLD
-            border_rect = self.rect.inflate(4, 4).move(-4, -3) 
+            border_rect = self.rect.inflate(4, 4).move(-4, -3)
             pygame.draw.rect(screen, self.border_color, border_rect, 3)
         else:
-        #Regular black border for Non-figure cards
+            # Regular black border for Non-figure cards
             pygame.draw.rect(screen, self.border_color, self.rect, 1)
 
         # Draw the card image at its designated position
         if self.image:
             screen.blit(self.image, self.rect.topleft)
 
-        else: # If the card has no image, draw a plain rectangle with the card's value and suit
+        else:  # If the card has no image, draw a plain rectangle with the card's value and suit
             pygame.draw.rect(screen, WHITE, self.rect)
             pygame.draw.rect(screen, BLACK, self.rect, 1)
             font = pygame.font.SysFont(None, 30)
@@ -167,10 +174,12 @@ class Card:
             text_rect = text.get_rect(center=self.rect.center)
             screen.blit(text, text_rect)
 
+
 def get_card_image_path(value, suit):
     value_str = str(value).lower()
     suit_str = suit.lower()
     return f"assets/cards/png/{value_str}_of_{suit_str}.png"
+
 
 card_spacing = 6
 total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
@@ -178,7 +187,7 @@ start_x = (screen.get_width() - total_width) // 2
 
 deck = Deck()  # Create a new shuffled deck
 cards = deck.create_number_cards()
-random.shuffle(cards)#maybe delete this?
+random.shuffle(cards)  # maybe delete this?
 grouped_cards = defaultdict(list)
 for card_str in cards:
     value = card_str[:-1]  # all characters except the last
@@ -197,12 +206,12 @@ for value in range(2, 11):  # For each value from 2 to 10
     player_cards.extend(suits[:2])
     computer_cards.extend(suits[2:])
 
-player =Player("You")
+player = Player("You")
 computer = Player("Computer")
 
-player.hand = player_cards  # Assign the list of 18 cards
+"""player.hand = player_cards  # Assign the list of 18 cards
 computer.hand = computer_cards
-player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
+player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """ # I deleted because it's duplicated codes and casue errors
 
 # We give the computer the actual Card objects (used in UI)
 game = Game()
@@ -210,35 +219,34 @@ game.player = player
 game.computer = computer
 
 game.players = [game.player, game.computer]
-computer_string_hand = [str(card) for card in game.computer.hand] # for AI
+ui_player_cards   = []
+ui_computer_cards = []
+game.player.hand   = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
+game.computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
 # Fill player and computer hands
-for plyer, (value, suit) in enumerate(player_cards):
-        
-        x = start_x + (plyer  % 9) * (CARD_WIDTH + card_spacing)
-        y = 500  + (plyer // 9) * (CARD_HEIGHT + 10)
-        image_path = get_card_image_path(value, suit)
-        player_hand.append(Card(x, y, value, suit, image_path))
+for idx, (value, suit) in enumerate(player_cards):
+    x = start_x + (idx % 9) * (CARD_WIDTH + card_spacing)
+    y = 500 + (idx // 9) * (CARD_HEIGHT + 10)
+    image_path = get_card_image_path(value, suit)
+    ui_player_cards.append(Card(x, y, value, suit, image_path))
 
-for comp, (value, suit) in enumerate(computer_cards):    # Computer gets every odd-indexed card
-        x = start_x + (comp % 9) * (CARD_WIDTH + card_spacing)
-        y = 33 + (comp // 9) * (CARD_HEIGHT + 10)
-        image_path = get_card_image_path(value, suit)
-        computer_hand.append(Card(x, y, value, suit, image_path))
-        # Add to AI hand
-        computer_string_hand.append(f"{value}{suit[0].upper()}")
+for idx, (value, suit) in enumerate(computer_cards):  # Computer gets every odd-indexed card
+    x = start_x + (idx % 9) * (CARD_WIDTH + card_spacing)
+    y = 33 + (idx // 9) * (CARD_HEIGHT + 10)
+    image_path = get_card_image_path(value, suit)
+    ui_computer_cards.append(Card(x, y, value, suit, image_path))
 # Update AI Player hand with string version
 computer.hand = computer_string_hand
 ai = ComputerAI(mode=difficulty)
 
-figure_cards = deck.create_figure_cards() # shuffled list of figure cards(imported from the deck class)
+figure_cards = deck.create_figure_cards()  # shuffled list of figure cards(imported from the deck class)
 center_figure = deck.draw_figure_card()  # pick one figure card from the top
 
 
-#Helper function to turn figure code like 'QD' into a usable image path
+# Helper function to turn figure code like 'QD' into a usable image path
 def get_figure_image_path(figure_code):
-
-    figure_code = figure_code.upper() 
+    figure_code = figure_code.upper()
 
     lookup = {
         'A': 'ace', 'K': 'king', 'Q': 'queen', 'J': 'jack'
@@ -250,20 +258,23 @@ def get_figure_image_path(figure_code):
 
     return f"assets/cards/png/{figure}_of_{suit}.png"
 
-center_image_path = get_figure_image_path(center_figure[0]) # Get the figure card image path
 
-#Center the figure card + Add gold border around the figure card
+center_image_path = get_figure_image_path(center_figure[0])  # Get the figure card image path
+
+# Center the figure card + Add gold border around the figure card
 GOLD = (255, 215, 0)
 
 center_figure_card = Card(
-    565, 290,                          # Position
-    center_figure[1],                 # Value
+    565, 290,  # Position
+    center_figure[1],  # Value
     suit=None,
     image_filename=center_image_path,
-    width=FIGURE_CARD_WIDTH,          # Bigger size
+    width=FIGURE_CARD_WIDTH,  # Bigger size
     height=FIGURE_CARD_HEIGHT,
-    border_color=GOLD                 # Gold border
+    border_color=GOLD  # Gold border
 )
+
+
 # Converts string like "7H" to a card-like object with .value, .suit, .code
 class SimpleCard:
     def __init__(self, code):
@@ -271,15 +282,19 @@ class SimpleCard:
         self.value = int(code[:-1])
         self.suit = code[-1]
 
+
 def build_computer_hand_objects(card_strs):
     return [SimpleCard(c) for c in card_strs]
+
 
 round_in_progress = False
 round_ended = False
 round_end_time = 0
-SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH, BUTTON_HEIGHT)
+SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
+                               BUTTON_HEIGHT)
 
-def run_game(center_figure, figure_cards,ai):
+
+def run_game(center_figure, figure_cards, ai):
     game_is_running = True
     selected_card = None
     computer_card = None
@@ -308,7 +323,8 @@ def run_game(center_figure, figure_cards,ai):
                     if figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
-                        center_figure_card.image = pygame.transform.scale(center_figure_card.image, (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                        center_figure_card.image = pygame.transform.scale(center_figure_card.image,
+                                                                          (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                         center_figure_card.value = next_figure[1]
                         center_figure = next_figure
                     else:
@@ -317,7 +333,7 @@ def run_game(center_figure, figure_cards,ai):
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
-                
+
                 for card in player_hand:
                     if card.rect.collidepoint(mouse_pos):
                         selected_card = card
@@ -341,20 +357,21 @@ def run_game(center_figure, figure_cards,ai):
                             warning_timer = pygame.time.get_ticks() + 3000
                             selected_card = None
                             continue
-                        
-                     # Remove from both hands
+
+                    # Remove from both hands
                     selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
                     played_player_card = selected_card  # Save it for drawing
-                    player_hand.remove(selected_card)   # Remove after it's moved
+                    player_hand.remove(selected_card)  # Remove after it's moved
                     player.play_card(selected_card_str)
 
                     # Replace string hand with card-like objects for the AI logic
-                   # 🔁 UPDATE the AI's string hand (AFTER visual hand has been changed)
+                    # 🔁 UPDATE the AI's string hand (AFTER visual hand has been changed)
                     game.computer.hand = [f"{card.value}{card.suit[0].upper()}"
-                      for card in computer_hand]
+                                          for card in computer_hand]
                     print("🔍 AI hand before playing:", game.computer.hand)
-                    print("🃏 UI computer_hand (visible):", [f"{card.value}{card.suit[0].upper()}" for card in computer_hand])
-                    
+                    print("🃏 UI computer_hand (visible):",
+                          [f"{card.value}{card.suit[0].upper()}" for card in computer_hand])
+
                     game.current_figure = center_figure
                     computer_card_obj = ai.play(game)
                     print("AI played:", computer_card_obj)
@@ -380,11 +397,11 @@ def run_game(center_figure, figure_cards,ai):
                     # Computer's turn
                     # The AI plays a card (internally updates computer.hand)
 
-                # If it returned a card, move and draw it
+                    # If it returned a card, move and draw it
                     if computer_card:
                         computer_card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
                         played_computer_card = computer_card
-                    else :
+                    else:
                         warning = "Error: Computer failed to play a card."
                         warning_timer = pygame.time.get_ticks() + 3000
                         round_phase = "waiting_for_play"
@@ -393,14 +410,14 @@ def run_game(center_figure, figure_cards,ai):
                     round_phase = "cards_revealed"
                     phase_timer = pygame.time.get_ticks() + 1500
                     # Resolve round
-                    
+
         if round_phase == "cards_revealed" and pygame.time.get_ticks() > phase_timer:
             player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
             round_phase = "result_display"
             phase_timer = pygame.time.get_ticks() + 1500
-                    
+
         elif round_phase == "result_display" and pygame.time.get_ticks() > phase_timer:
             selected_card = None
             computer_card = None
@@ -411,27 +428,27 @@ def run_game(center_figure, figure_cards,ai):
             if figure_cards:
                 next_figure = figure_cards.popleft()
                 center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
-                center_figure_card.image = pygame.transform.scale(center_figure_card.image, (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                center_figure_card.image = pygame.transform.scale(center_figure_card.image,
+                                                                  (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                 center_figure_card.value = next_figure[1]
                 center_figure = next_figure
             else:
                 game_is_running = False
-                    
-                    
-                    # Check for win condition
-                    # Updated winner check using Game method
+
+                # Check for win condition
+                # Updated winner check using Game method
             if player.score >= 91 or computer.score >= 91:
                 game.declare_winner()  # Handles print logic
                 pygame.display.flip()
                 pygame.time.wait(10000)
                 return
-                    
+
             round_phase = "waiting_for_play"
-                     
+
         # Draw visual elements
-        for card in player_hand:
+        for card in ui_player_cards:
             card.draw(screen)
-        for card in computer_hand:
+        for card in ui_computer_cards:
             card.draw(screen)
 
         center_figure_card.draw(screen)
@@ -440,7 +457,7 @@ def run_game(center_figure, figure_cards,ai):
             played_player_card.draw(screen)
         if played_computer_card:
             played_computer_card.draw(screen)
-   
+
         # Result message
         if round_outcome:
             font = pygame.font.SysFont(None, 36)
@@ -473,8 +490,7 @@ def run_game(center_figure, figure_cards,ai):
 
         pygame.display.flip()
 
-        
 
-run_game(center_figure, figure_cards,ai)
+run_game(center_figure, figure_cards, ai)
 pygame.quit()
 sys.exit()
