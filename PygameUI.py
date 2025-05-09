@@ -369,12 +369,12 @@ def run_game(center_figure, figure_cards, ai):
                     game.computer.hand = [f"{card.value}{card.suit[0].upper()}"
                                           for card in ui_computer_cards]
                     print("🔍 AI hand before playing:", game.computer.hand)
-                    print("🃏 UI computer_hand (visible):",
+                    print("🃏 AI hand:",
                           [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards])
 
                     game.current_figure = center_figure
                     computer_card_obj = ai.play(game)
-                    print("AI played:", computer_card_obj)
+                    # print("AI played:", computer_card_obj)
                     if isinstance(computer_card_obj, str):
                         computer_card_str = computer_card_obj
                     elif hasattr(computer_card_obj, "code"):
