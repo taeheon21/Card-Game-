@@ -1,6 +1,6 @@
 import pickle
 import random
-from Computer_AI import QLearningAgent, choose_card_by_action
+from Computer_AI import QLearningAgent
 from game import Game
 
 # train_AI.py
