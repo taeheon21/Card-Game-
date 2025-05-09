@@ -1,7 +1,7 @@
 import pickle
 import random
 import numpy as np
-from game_logic.game import Game
+from .game import Game
 
 
 
