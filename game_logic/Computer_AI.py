@@ -32,7 +32,7 @@ def has_high_cards(game):
     return False
 
 def has_mid_cards(game):
-    
+
     for c in game.players[1].hand:
         if 5 <= int(c[:-1]) <= 7:
             return True
@@ -150,7 +150,7 @@ class QLearningAgent:
         # actions by index: 0=high,1=low,2=special,3=highest,4=lowest
         self.actions = ['high', 'mid' , 'low', 'special', 'highest', 'lowest']
         # Q-table  f(2)x h(2)x l(2)x s(2) x actions f: figure, h: high value, l: low value, s:special
-        self.Q = np.zeros((3, 2, 2, 2, len(self.actions)))
+        self.Q = np.zeros((3, 2, 2, 2, 2, len(self.actions)))
 
     def get_state(self, figure, hand):
         f = 2 if figure >= 8 else (1 if figure >=5 else 0)
