@@ -57,30 +57,30 @@ def has_special_card(game):
 # Action
 
 def play_high_val(game):
-    play_choice('high', game.computer)
+    return play_choice('high', game.computer)
 
 def play_mid_val(game):
-    play_choice('mid', game.computer)
+    return play_choice('mid', game.computer)
 
 
 
 def play_low_val(game):
-    play_choice('low', game.computer)
+    return play_choice('low', game.computer)
 
 
 def play_special(game):
-    play_choice('special', game.computer)
+    return play_choice('special', game.computer)
 
 
 
 def play_highest(game):
-    play_choice('highest', game.computer)
+    return play_choice('highest', game.computer)
 
 
 
 
 def play_lowest(game):
-    play_choice('lowest', game.computer)
+    return play_choice('lowest', game.computer)
 
 
 
@@ -213,27 +213,32 @@ class ComputerAI:
             self.agent.load(Qpath)
 
     def play(self, game: Game):
+        mode = self.mode.lower()
         comp = game.players[1]
 
-        if self.mode == 'easy':  # [Easy mode] computer drews card randomly no logic
+        if mode == 'easy':  # [Easy mode] computer drews card randomly no logic
             card = random.choice(comp.hand)
             comp.play_card(card)
             return card
 
-        if self.mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
+        elif mode == 'Normal': # [Normal mode] Computer uses tree data structure and decides
             node = root
             while node.action is None:
                 node = node.left if node.cond(game) else node.right
-            node.action(game)
-            return
+            card = node.action(game)
+            return card
 
 
         #[Hard Mode] Q-learning
+        elif mode == 'hard':
+            fv = game.current_figure[1]
+            hand = comp.hand
+            choice = self.agent.act(fv, hand)
+            card = play_choice(choice, comp)
+            return card
 
-        fv = game.current_figure[1]
-        hand = comp.hand
-        choice = self.agent.act(fv, hand)
-        play_choice(choice, comp)
+        else:
+            raise ValueError(f'Wrong mode selection: {mode}')
 
 
 
