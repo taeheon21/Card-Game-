@@ -23,7 +23,7 @@ def main():
     ai = ComputerAI(mode=mode, Qpath=qpath)
 
     # 3) Play multiple rounds
-    rounds = 5
+    rounds = 15
     for rnd in range(1, rounds + 1):
         print(f"--- Round {rnd} ---")
         game = Game()
