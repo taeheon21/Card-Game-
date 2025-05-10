@@ -316,6 +316,10 @@ def run_game(center_figure, figure_cards, ai):
     played_computer_card = None
     skips_allowed = 2
     skips_used = 0
+    
+    # Added for tracking tie state (5676101)
+    tie_break_cards = []  # Cards played during tie
+    in_tiebreak = False
 
     while game_is_running:
         screen.fill(green)
@@ -449,9 +453,93 @@ def run_game(center_figure, figure_cards, ai):
                 continue
             player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
+            '''Initial code:
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
             round_phase = "result_display"
-            phase_timer = pygame.time.get_ticks() + 1500
+            phase_timer = pygame.time.get_ticks() + 1500'''
+
+            # I made the following changes (5676101)
+            round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
+
+            # Check if it's a tie
+            if "Tie" in round_outcome and not "resolved" in round_outcome:
+                in_tiebreak = True
+                tie_break_cards.append((played_player_card, played_computer_card))
+                round_phase = "tiebreak_play"
+                selected_card = None
+                computer_card = None
+                played_player_card = None
+                played_computer_card = None
+                round_outcome = "It's a tie! Play another card..."
+                phase_timer = pygame.time.get_ticks() + 1500
+            else:
+                round_phase = "result_display"
+                phase_timer = pygame.time.get_ticks() + 1500
+
+        # Card selection logic for tiebreak (5676101)
+        elif round_phase == "tiebreak_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
+            mouse_pos = pygame.mouse.get_pos()
+
+            for card in ui_player_cards:
+                if card.rect.collidepoint(mouse_pos):
+                    selected_card_str = f"{card.value}{card.suit[0].upper()}"
+                    if card.value in ["3", "10"] and player.last_special in ["2S", "9S"]:
+                        warning = "You can't play 3 or 10 after 2S or 9S!"
+                        warning_timer = pygame.time.get_ticks() + 3000
+                        continue
+
+                    # Play tiebreak card
+                    selected_card = card
+                    played_player_card = card
+                    ui_player_cards.remove(card)
+                    player.play_card(selected_card_str)
+                    card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
+
+                    # Computer plays tiebreak card
+                    game.computer.hand = [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards]
+                    game.current_figure = center_figure
+                    computer_card_obj = ai.play(game)
+
+                    if isinstance(computer_card_obj, str):
+                        computer_card_str = computer_card_obj
+                    elif hasattr(computer_card_obj, "code"):
+                        computer_card_str = computer_card_obj.code
+                    else:
+                        computer_card_str = None
+
+                    if computer_card_str:
+                        for card in ui_computer_cards:
+                            card_code = f"{card.value}{card.suit[0].upper()}"
+                            if card_code == computer_card_str:
+                                computer_card = card
+                                played_computer_card = card
+                                ui_computer_cards.remove(card)
+                                card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                                if computer_card_str in game.computer.hand:
+                                    game.computer.hand.remove(computer_card_str)
+                                break
+
+                    # Resolve tiebreak
+                    round_phase = "tiebreak_revealed"
+                    phase_timer = pygame.time.get_ticks() + 1500
+                    break
+
+        # Tiebreak resolution handling (5676101)
+        elif round_phase == "tiebreak_revealed" and pygame.time.get_ticks() > phase_timer:
+            if selected_card and computer_card:
+                player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
+                computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
+                round_outcome = game.handle_tie2(player_card_str, computer_card_str, center_figure)
+
+                # Check if still tied
+                if "Tie" in round_outcome and not "resolved" in round_outcome:
+                    tie_break_cards.append((played_player_card, played_computer_card))
+                    # Do coin flip to resolve
+                    round_outcome = game.resolve_tie_coinflip(center_figure)
+
+                round_phase = "result_display"
+                phase_timer = pygame.time.get_ticks() + 1500
+                in_tiebreak = False
 
         elif round_phase == "result_display" and pygame.time.get_ticks() > phase_timer:
             selected_card = None
@@ -459,6 +547,8 @@ def run_game(center_figure, figure_cards, ai):
             played_player_card = None
             played_computer_card = None
             round_outcome = None
+            tie_break_cards = []  # Added this
+            in_tiebreak = False   # Added this
 
             if figure_cards:
                 next_figure = figure_cards.popleft()
