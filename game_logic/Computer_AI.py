@@ -105,8 +105,8 @@ def play_choice(choice, player):
         card = lows[0] if lows else min(hand, key=get_num)
     elif choice == 'special':
         #
-        specs = [c for c in hand if c in ['2S','9S']]
-        card = specs[0] if specs else random.choice(hand)
+        specials = [c for c in hand if c in ['2S','9S']]
+        card = specials[0] if specials else random.choice(hand)
     elif choice == 'highest':
 
         card = max(hand, key=get_num)
@@ -162,7 +162,7 @@ class QLearningAgent:
         s = 1 if any(card in ['2S', '9S'] for card in hand) else 0
         return (f, h, m, l, s)
 
-    def legal_actions(self, state):
+    def valid_actions(self, state):
         f, h, m, l, s = state
         valid = []
         if f == 2:
@@ -180,17 +180,17 @@ class QLearningAgent:
         return valid
 
     def choose(self, state):
-        valid = self.legal_actions(state)
+        valid = self.valid_actions(state)
         if random.random() < self.epsilon:
             return random.choice(valid)
-        qvals = self.Q[state]
+        Qvals = self.Q[state]
         best = valid[0]
-        for a in valid:
-            if qvals[a] > qvals[best]: best = a
+        for x in valid:
+            if Qvals[x] > Qvals[best]: best = x
         return best
 
     def update(self, state, action, reward, next_state):
-        valid_next = self.legal_actions(next_state)
+        valid_next = self.valid_actions(next_state)
         max_next = max(self.Q[next_state][i] for i in valid_next) if valid_next else 0
         f, h, m, l, s = state
         current = self.Q[f, h, m, l, s, action]
@@ -230,7 +230,8 @@ class ComputerAI:
             return card
 
 
-        #[Hard Mode] Q-learning
+        #[Hard Mode] Q-learning / Trained(15000times) AI will play 
+    
         elif mode == 'hard':
             fv = game.current_figure[1]
             hand = comp.hand
