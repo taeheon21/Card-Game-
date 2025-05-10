@@ -329,13 +329,13 @@ def run_game(center_figure, figure_cards, ai):
                         if card_str == computer_choice:
                             played_computer_card = card
                             ui_computer_cards.remove(card)
-                            card.reck.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                            card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
                             break
                     round_outcome = game.skip_round(computer_choice,
                                                     center_figure)  # using game class(skip_round) and sort it out
                     round_phase = "result_display"
                     phase_timer = pygame.time.get_ticks() + 1500  # taeheon
-                    
+
                     if skips_used < skips_allowed and figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
