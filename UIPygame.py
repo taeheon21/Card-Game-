@@ -328,40 +328,40 @@ def run_game(center_figure, figure_cards, ai):
                 game_is_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
-                    player.skips_left -= 1  # taeheon
-                    computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
-                    for card in ui_computer_cards:
-                        card_str = f"{card.value}{card.suit[0].upper()}"
-                        if card_str == computer_choice:
-                            played_computer_card = card
-                            ui_computer_cards.remove(card)
-                            card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
-                            break
-                    round_outcome = game.skip_round(computer_choice,
-                                                    center_figure)  # using game class(skip_round) and sort it out
-                    round_phase = "result_display"
-                    phase_timer = pygame.time.get_ticks() + 1500
-                    skip_count += 1 # taeheon
+                    if skips_used < skips_allowed:
+                        player.skips_left -= 1  # taeheon
+                        skips_count += 1
+                        computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
+                        for card in ui_computer_cards:
+                            card_str = f"{card.value}{card.suit[0].upper()}"
+                            if card_str == computer_choice:
+                                played_computer_card = card
+                                ui_computer_cards.remove(card)
+                                card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                                break
+                       round_outcome = game.skip_round(computer_choice, center_figure)  # using game class(skip_round) and sort it out
+                       round_phase = "result_display"
+                       phase_timer = pygame.time.get_ticks() + 1500 # taeheon
 
-                    if skips_used < skips_allowed and figure_cards:    # Yaqin
+                       if figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
                         center_figure_card.image = pygame.transform.scale(center_figure_card.image,
-                                                                          (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                                                                  (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                         center_figure_card.value = next_figure[1]
                         center_figure = next_figure
                         skips_used += 1
+                       else:
+                        game_is_running = False
+                       continue
                     else:
-                        warning = "No skips left!"
-                        warning_timer = pygame.time.get_ticks() + 2000
+                        warning = "NO skips left!"
+                        warning_timer = pygame.time.get_ticks() + 1500
+                    continue
 
-                    if not player.hand or not computer.hand or player.score >= 101 or computer.score >= 101:
-                        game.declare_winner()
-                        pygame.display.flip()
-                        pygame.time.wait(5000)
-                        game_is_running = False  # Yaqin
 
-                
+
+
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
