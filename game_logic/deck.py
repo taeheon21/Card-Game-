@@ -1,12 +1,16 @@
 import random
 from collections import deque
+''' (5676101) Besides the my_shuffle algorithm I implemented everything else in this class.
+ Techniques used: Dictionary data structure; for loops; tuple data type (for storing figure cards as tuples)
+ Functions were annotated
+'''
 FIGURE_VALUES = {
     'A': 10, 'K': 9, 'Q': 8, 'J': 7,  # Base values for figures
     'AD': 15, 'KC': 13, 'QH': 11, 'QD': 11, 'JH': 16  # Special combinations
 }
 
 class Deck:
-    # A card deck for the Get 'Em game containing numbers 2-10 (four copies each)
+    ''' A class to represent and store a deck of cards'''
 
     def __init__(self):
         self.suits = ['spades', 'clubs' , 'hearts' , 'diamonds'] #5662884
@@ -37,7 +41,7 @@ class Deck:
         return cards_to_shuffle #5667929
 
 
-    def create_figure_cards(self): #5676101
+    def create_figure_cards(self) -> tuple[str, int]: #5676101
 
         '''Create figure cards (A, K, Q, J) with their corresponding point values(figure+suit)
          We do this so that we have a double-ended queue of figure cards as tuples (id, value)
@@ -60,7 +64,7 @@ class Deck:
 
         # Return as a deque for efficient popping from front
         return deque(cards)
-    def create_number_cards(self): #5676101
+    def create_number_cards(self) -> list[str]: #5676101
         """
         Generates number cards from 2 to 10 for all suits.
            It creates a list of number cards and their suits (10 of diamonds, 2 of hearts...)
@@ -77,16 +81,16 @@ class Deck:
 
         return number_cards
         
-    def is_empty(self): #Check if figure card deck is empty (5676101)
+    def is_empty(self) -> bool: #Check if figure card deck is empty (5676101)
         return len(self.figure_cards) == 0
         
-    def draw_figure_card(self): #Used for drawing figure cards (5676101)
+    def draw_figure_card(self) -> tuple[str, int] #Used for drawing figure cards (5676101)
         if len(self.figure_cards) > 0:
             return self.figure_cards.popleft()
         else:
             return None
             
-    def redistribute_number_cards(self):
+    def redistribute_number_cards(self) -> list[str]:
         #Redistribute number cards if they run out (5676101)
         print("Redistributing number cards...")
         self.number_cards = self.create_number_cards()
