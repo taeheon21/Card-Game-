@@ -292,18 +292,6 @@ center_figure_card = Card(
 )
 
 
-# Converts string like "7H" to a card-like object with .value, .suit, .code
-class SimpleCard:
-    def __init__(self, code):
-        self.code = code
-        self.value = int(code[:-1])
-        self.suit = code[-1]
-
-
-def build_computer_hand_objects(card_strs):
-    return [SimpleCard(c) for c in card_strs]
-
-
 round_in_progress = False
 round_ended = False
 round_end_time = 0
@@ -353,9 +341,6 @@ def run_game(center_figure, figure_cards, ai):
                     phase_timer = pygame.time.get_ticks() + 1500
                     skip_count += 1 # taeheon
 
-
-
-
                     if figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
@@ -372,88 +357,88 @@ def run_game(center_figure, figure_cards, ai):
 
                 for card in ui_player_cards:  # changed from player_cards to ui_player_cards
                     if card.rect.collidepoint(mouse_pos):
-                        selected_card = card
                         selected_card_str = f"{card.value}{card.suit[0].upper()}"
-                        selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
-                        break
-
-                if selected_card:
-                    # check if selected card is in player's hand
-                    if selected_card_str not in player.hand:
-                        warning = "Card not in hand!"
-                        warning_timer = pygame.time.get_ticks() + 3000
-                        selected_card = None
-                        continue
-                    # special card logic
-                    if selected_card_str in ['2S', '9S']:
-                        player.used_special = True
-                        player.last_special = selected_card_str
-                    else:
-                        if player.last_special in ["2S", "9S"] and selected_card.value in ["3", "9"]:
+                        if selected_card_str not in player.hand:
+                            warning = "Card not in hand!"
+                            warning_timer = pygame.time.get_ticks() + 3000
+                            continue  
+                        if card.value in ["3", "10"] and player.last_special in ["2S", "9S"]:
                             warning = "You can't play 3 or 10 after 2S or 9S!"
                             warning_timer = pygame.time.get_ticks() + 3000
                             selected_card = None
+                            played_player_card = None
                             continue
+                        else:
+                        #Allowing the player to chose another card
+                            selected_card = card
+                            played_player_card = card
+                            ui_player_cards.remove(card)
+                            player.play_card(selected_card_str)
+                            card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
 
-                    # remove from both hands
-                    selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
-                    played_player_card = selected_card
-                    ui_player_cards.remove(selected_card)  # changed from player_hand to ui_player_cards
-                    player.play_card(selected_card_str)
 
+                    # special card logic
+                            if selected_card_str in ['2S', '9S']:
+                                player.used_special = True
+                                player.last_special = selected_card_str
+                            else:
+                                player.last_special = None
                     # update AI hand
-                    game.computer.hand = [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards]
-                    print("AI hand before playing:", game.computer.hand)
-                    print("UI computer_hand (visible):",
+                        game.computer.hand = [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards]
+                        print("AI hand before playing:", game.computer.hand)
+                        print("UI computer_hand (visible):",
                           [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards])
 
-                    game.current_figure = center_figure
-                    computer_card_obj = ai.play(game)
-                    print("AI played:", computer_card_obj)
+                        game.current_figure = center_figure
+                        computer_card_obj = ai.play(game)
+                        print("AI played:", computer_card_obj)
 
                     # get the computer card string
-                    computer_card_str = None
-                    if isinstance(computer_card_obj, str):
-                        computer_card_str = computer_card_obj
-                    elif hasattr(computer_card_obj, "code"):
-                        computer_card_str = computer_card_obj.code
-                    elif computer_card_obj is None:
+                        computer_card_str = None
+                        if isinstance(computer_card_obj, str):
+                            computer_card_str = computer_card_obj
+                        elif hasattr(computer_card_obj, "code"):
+                            computer_card_str = computer_card_obj.code
+                        elif computer_card_obj is None:
                         # if AI cant play, pick the first available card as fallback
-                        if ui_computer_cards:
-                            first_card = ui_computer_cards[0]
-                            computer_card_str = f"{first_card.value}{first_card.suit[0].upper()}"
+                            if ui_computer_cards is None and ui_computer_cards:
+                                first_card = ui_computer_cards[0]
+                                computer_card_str = f"{first_card.value}{first_card.suit[0].upper()}"
 
                     # only proceed if we have a valid card string
-                    if computer_card_str:
+                        if computer_card_str:
                         # find the matching Card object from computers hand
-                        for card in ui_computer_cards:
-                            card_code = f"{card.value}{card.suit[0].upper()}"
-                            if card_code == computer_card_str:
-                                computer_card = card
-                                played_computer_card = card
-                                ui_computer_cards.remove(card)
-                                card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                            for card in ui_computer_cards:
+                                card_code = f"{card.value}{card.suit[0].upper()}"
+                                if card_code == computer_card_str:
+                                    computer_card = card
+                                    played_computer_card = card
+                                    ui_computer_cards.remove(card)
+                                    card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
                                 # remove the card from computers hand
-                                if computer_card_str in game.computer.hand:
-                                    game.computer.hand.remove(computer_card_str)
-                                break
+                                    if computer_card_str in game.computer.hand:
+                                        game.computer.hand.remove(computer_card_str)
+                                    break
 
                     # computers turn result
-                    if computer_card:
                         round_phase = "cards_revealed"
                         phase_timer = pygame.time.get_ticks() + 1500
-                    else:
-                        # if AI failed to play show message and continue game
-                        warning = "Computer skips turn"
-                        warning_timer = pygame.time.get_ticks() + 3000
-                        round_phase = "cards_revealed"
-                        phase_timer = pygame.time.get_ticks() + 1500
-
-                    round_phase = "cards_revealed"
-                    phase_timer = pygame.time.get_ticks() + 1500
+                        break
                     # resolve round
 
         if round_phase == "cards_revealed" and pygame.time.get_ticks() > phase_timer:
+            if selected_card:
+                if selected_card.value in ["3", "10"] and player.last_special in ["2S", "9S"]:
+                    warning = "Invalid move skipped!"
+                    warning_timer = pygame.time.get_ticks() + 3000
+                    selected_card = None
+                    played_player_card = None
+                    round_phase = "waiting_for_play"
+                    continue
+
+            if not selected_card or not computer_card:
+                round_phase = "waiting_for_play"
+                continue
             player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
@@ -527,7 +512,7 @@ def run_game(center_figure, figure_cards, ai):
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
         round_number =18 - len(player.hand) + skip_count + 1
-        score_line = f"Round: {round_number} | You: {player.score}  CPU: {computer.score}  Skips: {player.skips_left}"
+        score_line = f"Round: {round_number} | You: {player.score}  AI: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
 
         # the background
