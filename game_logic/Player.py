@@ -4,7 +4,7 @@ class Player: #5676101 (all of it, except def get_rank)
     '''
     #Represents a player in the card game and tracks the player's hand, score, and special abilities like skip turns.
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name):
 
         self.name = name
         self.hand = []  # List of cards like '4 of spades'
