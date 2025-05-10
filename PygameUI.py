@@ -130,8 +130,8 @@ BLACK = (0, 0, 0)
 GOLD = (255, 215, 0)
 
 # figure cards size
-FIGURE_CARD_WIDTH = 70
-FIGURE_CARD_HEIGHT = 105
+FIGURE_CARD_WIDTH = 90
+FIGURE_CARD_HEIGHT = 130
 
 
 class Card:
@@ -147,15 +147,16 @@ class Card:
         # load image, if not found, create a fallback drawing (backup case)
         if image_filename is not None:
             self.image = pygame.image.load(image_filename)
-            self.image = pygame.transform.scale(self.image, (CARD_WIDTH, CARD_HEIGHT))
+            self.image = pygame.transform.scale(self.image, (width, height))
         else:
             self.image = None
 
     def draw(self, screen):
 
         # Create a slightly bigger golden rectangle for figure cards
-        if self.border_color == (255, 215, 0):  # GOLD
-            border_rect = self.rect.inflate(4, 4).move(-4, -3)
+        if self.border_color == GOLD:
+            border_rect = self.rect.inflate(10, 10)
+            border_rect.center = self.rect.center  # Ensure it's centered
             pygame.draw.rect(screen, self.border_color, border_rect, 3)
         else:
             # Regular black border for Non-figure cards
