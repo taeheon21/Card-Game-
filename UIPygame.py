@@ -1,5 +1,5 @@
 # Work To Do: handle specical rules + add background audio
-import math # for the warning
+import math  # for the warning
 import pygame
 import random
 from game_logic.deck import Deck
@@ -66,37 +66,37 @@ class GameUI:
         self.screen.fill(green)
         font_title = pygame.font.SysFont('arial', 60)
         font_button = pygame.font.SysFont('arial', 40)
-    
+
         # the title
         title_text = "Select Difficulty Level"
         title_surf = font_title.render(title_text, True, GOLD)
         title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 100))
-        
+
         # the buttons with hover effects
         levels = ["Easy", "Normal", "Hard"]
         buttons = []
         for i, level in enumerate(levels):
             btn_rect = pygame.Rect(400, 200 + i * 120, 400, 80)
             buttons.append((btn_rect, level))
-    
+
         while True:
             mouse_pos = pygame.mouse.get_pos()
-            
+
             self.screen.fill(green)
             self.screen.blit(title_surf, title_rect)
-            
+
             for rect, label in buttons:
                 is_hover = rect.collidepoint(mouse_pos)
                 color = LIGHT_BLUE if is_hover else BLUE
                 pygame.draw.rect(self.screen, color, rect, border_radius=10)
                 pygame.draw.rect(self.screen, WHITE, rect, 3, border_radius=10)
-                
+
                 text = font_button.render(label, True, WHITE)
                 text_rect = text.get_rect(center=rect.center)
                 self.screen.blit(text, text_rect)
-            
+
             pygame.display.flip()
-            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -149,23 +149,23 @@ class Card:
         self.value = value  # stores card's value
         self.suit = suit  # tores card's suit
         self.border_color = border_color
-        
+
         # load image, if not found, create a fallback drawing (backup case)
         if image_filename is not None:
-            self.image =  pygame.image.load(image_filename)
-            self.image =  pygame.transform.scale(self.image, (CARD_WIDTH, CARD_HEIGHT))
+            self.image = pygame.image.load(image_filename)
+            self.image = pygame.transform.scale(self.image, (CARD_WIDTH, CARD_HEIGHT))
         else:
             self.image = None
 
     def draw(self, screen):
-        #adding a shadow effect
+        # adding a shadow effect
         shadow_offset = 3
         shadow_rect = self.rect.copy()
         shadow_rect.x += shadow_offset
         shadow_rect.y += shadow_offset
         pygame.draw.rect(screen, (0, 0, 0, 128), shadow_rect)
 
-        # adding a gold border  
+        # adding a gold border
         if self.border_color == GOLD:
             glow_rect = self.rect.inflate(8, 8)
             pygame.draw.rect(screen, (255, 223, 128), glow_rect, border_radius=10)
@@ -177,7 +177,7 @@ class Card:
         if self.image:
             screen.blit(self.image, self.rect.topleft)
         else:
-            # drawing the card 
+            # drawing the card
             pygame.draw.rect(screen, WHITE, self.rect, border_radius=8)
             font = pygame.font.SysFont('arial', 30)
             text = font.render(f"{self.value} {self.suit[0].upper()}", True, BLACK)
@@ -221,7 +221,7 @@ computer = Player("Computer")
 
 """player.hand = player_cards  # Assign the list of 18 cards
 computer.hand = computer_cards
-player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """ # I deleted because it's duplicated codes and casue errors
+player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """  # I deleted because it's duplicated codes and casue errors
 
 # We give the computer the actual Card objects (used in UI)
 game = Game()
@@ -229,9 +229,9 @@ game.player = player
 game.computer = computer
 
 game.players = [game.player, game.computer]
-ui_player_cards   = []
+ui_player_cards = []
 ui_computer_cards = []
-game.player.hand   = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
+game.player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
 game.computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
 # fill player and computer hands with Card objects
@@ -313,6 +313,7 @@ SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT -
 
 def run_game(center_figure, figure_cards, ai):
     game_is_running = True
+    skip_count = 0
     selected_card = None
     computer_card = None
     round_outcome = None
@@ -337,6 +338,24 @@ def run_game(center_figure, figure_cards, ai):
                 game_is_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
+                    player.skips_left -= 1  # taeheon
+                    computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
+                    for card in ui_computer_cards:
+                        card_str = f"{card.value}{card.suit[0].upper()}"
+                        if card_str == computer_choice:
+                            played_computer_card = card
+                            ui_computer_cards.remove(card)
+                            card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                            break
+                    round_outcome = game.skip_round(computer_choice,
+                                                    center_figure)  # using game class(skip_round) and sort it out
+                    round_phase = "result_display"
+                    phase_timer = pygame.time.get_ticks() + 1500
+                    skip_count += 1 # taeheon
+
+
+
+
                     if figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
@@ -379,7 +398,7 @@ def run_game(center_figure, figure_cards, ai):
                     # remove from both hands
                     selected_card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
                     played_player_card = selected_card
-                    ui_player_cards.remove(selected_card)  #changed from player_hand to ui_player_cards
+                    ui_player_cards.remove(selected_card)  # changed from player_hand to ui_player_cards
                     player.play_card(selected_card_str)
 
                     # update AI hand
@@ -391,7 +410,7 @@ def run_game(center_figure, figure_cards, ai):
                     game.current_figure = center_figure
                     computer_card_obj = ai.play(game)
                     print("AI played:", computer_card_obj)
-                    
+
                     # get the computer card string
                     computer_card_str = None
                     if isinstance(computer_card_obj, str):
@@ -403,7 +422,7 @@ def run_game(center_figure, figure_cards, ai):
                         if ui_computer_cards:
                             first_card = ui_computer_cards[0]
                             computer_card_str = f"{first_card.value}{first_card.suit[0].upper()}"
-                    
+
                     # only proceed if we have a valid card string
                     if computer_card_str:
                         # find the matching Card object from computers hand
@@ -418,7 +437,7 @@ def run_game(center_figure, figure_cards, ai):
                                 if computer_card_str in game.computer.hand:
                                     game.computer.hand.remove(computer_card_str)
                                 break
-                    
+
                     # computers turn result
                     if computer_card:
                         round_phase = "cards_revealed"
@@ -486,30 +505,31 @@ def run_game(center_figure, figure_cards, ai):
             font = pygame.font.SysFont('arial', 48)  # increasing the font
             result_text = font.render(round_outcome, True, GOLD)
             # adding a  transparent background with a glow effect
-            text_surface = pygame.Surface((result_text.get_width() + 40, result_text.get_height() + 20), pygame.SRCALPHA)
+            text_surface = pygame.Surface((result_text.get_width() + 40, result_text.get_height() + 20),
+                                          pygame.SRCALPHA)
             glow_color = (255, 223, 128, 100)
             pygame.draw.rect(text_surface, glow_color, text_surface.get_rect(), border_radius=15)
             text_surface.blit(result_text, (20, 10))
             screen.blit(text_surface, (screen.get_width() // 2 - text_surface.get_width() // 2, 180))
 
-        #  round card title design 
+        #  round card title design
         font = pygame.font.SysFont('arial', 24)  # the perfect size
         label = font.render("Round Card", True, GOLD)
-        # adding a background to the title with a glow effect.        
+        # adding a background to the title with a glow effect.
         label_bg = pygame.Surface((label.get_width() + 20, label.get_height() + 10), pygame.SRCALPHA)
         pygame.draw.rect(label_bg, (0, 0, 0, 200), label_bg.get_rect(), border_radius=8)
         # adding a golden frame
         pygame.draw.rect(label_bg, GOLD, label_bg.get_rect(), 1, border_radius=8)
         label_bg.blit(label, (10, 5))  # modify the position of text
-        screen.blit(label_bg, (center_figure_card.rect.centerx - label_bg.get_width() // 2, 
-                              center_figure_card.rect.top - 30)) # adjust the position slightly upwards
+        screen.blit(label_bg, (center_figure_card.rect.centerx - label_bg.get_width() // 2,
+                               center_figure_card.rect.top - 30))  # adjust the position slightly upwards
 
-        # design of the scoreboard at the top 
+        # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
-        round_number = 10 - len(player.hand)
+        round_number = 10 - len(player.hand) + skip_count
         score_line = f"Round: {round_number} | You: {player.score}  CPU: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
-        
+
         # the background
         score_bg = pygame.Surface((score_text.get_width() + 30, score_text.get_height() + 10), pygame.SRCALPHA)
         gradient_color = (0, 0, 0, 230)
@@ -522,12 +542,12 @@ def run_game(center_figure, figure_cards, ai):
         font = pygame.font.SysFont('arial', 20)  #making it a lil smaller (bigger is not always better)
         label = font.render("Round Card", True, GOLD)
         label_bg = pygame.Surface((label.get_width() + 30, label.get_height() + 15), pygame.SRCALPHA)
-        
-        
+
+
         screen.blit(label_bg, (center_figure_card.rect.centerx - label_bg.get_width() // 2, 
                               center_figure_card.rect.top - 35))  # moving it a lil to the top"""
 
-        # the skip button 
+        # the skip button
         skip_color = (200, 0, 0) if round_phase == "waiting_for_play" else (150, 0, 0)
         shadow_rect = SKIP_BUTTON_RECT.copy()
         shadow_rect.x += 4
@@ -535,19 +555,20 @@ def run_game(center_figure, figure_cards, ai):
         pygame.draw.rect(screen, (50, 0, 0), shadow_rect, border_radius=15)
         pygame.draw.rect(screen, skip_color, SKIP_BUTTON_RECT, border_radius=15)
         pygame.draw.rect(screen, WHITE, SKIP_BUTTON_RECT, 2, border_radius=15)
-        
+
         font = pygame.font.SysFont('arial', 34)
         skip_text = font.render("SKIP", True, WHITE)
         skip_text_rect = skip_text.get_rect(center=SKIP_BUTTON_RECT.center)
         screen.blit(skip_text, skip_text_rect)
 
-        #the warning message 
+        # the warning message
         if warning:
             font = pygame.font.SysFont('arial', 36)
             warning_text = font.render(warning, True, (255, 50, 50))
             # adding a glow effect when getting a warning
             warning_alpha = abs(math.sin(pygame.time.get_ticks() * 0.005)) * 128 + 127
-            warning_bg = pygame.Surface((warning_text.get_width() + 40, warning_text.get_height() + 20), pygame.SRCALPHA)
+            warning_bg = pygame.Surface((warning_text.get_width() + 40, warning_text.get_height() + 20),
+                                        pygame.SRCALPHA)
             warning_color = (0, 0, 0, int(warning_alpha))
             pygame.draw.rect(warning_bg, warning_color, warning_bg.get_rect(), border_radius=12)
             warning_bg.blit(warning_text, (20, 10))
