@@ -84,7 +84,7 @@ class Deck:
     def is_empty(self) -> bool: #Check if figure card deck is empty (5676101)
         return len(self.figure_cards) == 0
         
-    def draw_figure_card(self) -> tuple[str, int] #Used for drawing figure cards (5676101)
+    def draw_figure_card(self) -> tuple[str, int]: #Used for drawing figure cards (5676101)
         if len(self.figure_cards) > 0:
             return self.figure_cards.popleft()
         else:
