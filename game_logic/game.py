@@ -511,7 +511,7 @@ class Game:
                     continue
 
                 # Handle skipping
-                if card_index == -1:
+                """if card_index == -1:
                     if user.skip_turn():  # Checks if player can skip
                         user.used_special = False
                         # User skips, so figure card goes to computer
@@ -522,7 +522,7 @@ class Game:
                         return None
                     else:
                         print("You can't skip more than 2 times in a game!")
-                        continue
+                        continue """
 
                 # Get the chosen card
                 chosen_card = user.hand[card_index]
@@ -543,6 +543,12 @@ class Game:
             except IndexError:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
+
+    def skip_round(self, comp_card: str, figure: tuple): # taeheon / if player choose skip, computer play random and gets point
+        self.computer.play_card(comp_card) # remove computer card from computer's hand
+        pts = figure[1] # computer gets points
+        self.computer.score += pts
+        return f"Computer wins (skip) +{pts}"
 
     
 
