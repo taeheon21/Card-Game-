@@ -330,7 +330,7 @@ def run_game(center_figure, figure_cards, ai):
                 if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
                     if skips_used < skips_allowed:
                         player.skips_left -= 1  # taeheon
-                        skips_count += 1
+                        skip_count += 1
                         computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
                         for card in ui_computer_cards:
                             card_str = f"{card.value}{card.suit[0].upper()}"
@@ -339,29 +339,26 @@ def run_game(center_figure, figure_cards, ai):
                                 ui_computer_cards.remove(card)
                                 card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
                                 break
-                       round_outcome = game.skip_round(computer_choice, center_figure)  # using game class(skip_round) and sort it out
-                       round_phase = "result_display"
-                       phase_timer = pygame.time.get_ticks() + 1500 # taeheon
+                        round_outcome = game.skip_round(computer_choice,
+                                                        center_figure)  # using game class(skip_round) and sort it out
+                        round_phase = "result_display"
+                        phase_timer = pygame.time.get_ticks() + 1500  # taeheon
 
-                       if figure_cards:
-                        next_figure = figure_cards.popleft()
-                        center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
-                        center_figure_card.image = pygame.transform.scale(center_figure_card.image,
-                                                                  (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
-                        center_figure_card.value = next_figure[1]
-                        center_figure = next_figure
-                        skips_used += 1
-                       else:
-                        game_is_running = False
-                       continue
+                        if figure_cards:
+                            next_figure = figure_cards.popleft()
+                            center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
+                            center_figure_card.image = pygame.transform.scale(center_figure_card.image,
+                                                                              (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
+                            center_figure_card.value = next_figure[1]
+                            center_figure = next_figure
+                            skips_used += 1
+                        else:
+                            game_is_running = False
+                        continue
                     else:
                         warning = "NO skips left!"
                         warning_timer = pygame.time.get_ticks() + 1500
                     continue
-
-
-
-
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
