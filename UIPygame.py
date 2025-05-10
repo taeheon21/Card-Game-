@@ -94,7 +94,6 @@ class GameUI:
                 text_rect = text.get_rect(center=rect.center)
                 self.screen.blit(text, text_rect)
 
-
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -291,7 +290,6 @@ center_figure_card = Card(
     border_color=GOLD  # Gold border
 )
 
-
 round_in_progress = False
 round_ended = False
 round_end_time = 0
@@ -316,7 +314,7 @@ def run_game(center_figure, figure_cards, ai):
     played_computer_card = None
     skips_allowed = 2
     skips_used = 0
-    
+
     # Added for tracking tie state (5676101)
     tie_break_cards = []  # Cards played during tie
     in_tiebreak = False
@@ -381,45 +379,44 @@ def run_game(center_figure, figure_cards, ai):
                             played_player_card = None
                             continue
                         else:
-                        #Allowing the player to chose another card
+                            # Allowing the player to chose another card
                             selected_card = card
                             played_player_card = card
                             ui_player_cards.remove(card)
                             player.play_card(selected_card_str)
                             card.rect.topleft = (screen.get_width() // 2 + 100, screen.get_height() // 2)
 
-
-                    # special card logic
+                            # special card logic
                             if selected_card_str in ['2S', '9S']:
                                 player.used_special = True
                                 player.last_special = selected_card_str
                             else:
                                 player.last_special = None
-                    # update AI hand
+                        # update AI hand
                         game.computer.hand = [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards]
                         print("AI hand before playing:", game.computer.hand)
                         print("UI computer_hand (visible):",
-                          [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards])
+                              [f"{card.value}{card.suit[0].upper()}" for card in ui_computer_cards])
 
                         game.current_figure = center_figure
                         computer_card_obj = ai.play(game)
                         print("AI played:", computer_card_obj)
 
-                    # get the computer card string
+                        # get the computer card string
                         computer_card_str = None
                         if isinstance(computer_card_obj, str):
                             computer_card_str = computer_card_obj
                         elif hasattr(computer_card_obj, "code"):
                             computer_card_str = computer_card_obj.code
                         elif computer_card_obj is None:
-                        # if AI cant play, pick the first available card as fallback
+                            # if AI cant play, pick the first available card as fallback
                             if ui_computer_cards is None and ui_computer_cards:
                                 first_card = ui_computer_cards[0]
                                 computer_card_str = f"{first_card.value}{first_card.suit[0].upper()}"
 
-                    # only proceed if we have a valid card string
+                        # only proceed if we have a valid card string
                         if computer_card_str:
-                        # find the matching Card object from computers hand
+                            # find the matching Card object from computers hand
                             for card in ui_computer_cards:
                                 card_code = f"{card.value}{card.suit[0].upper()}"
                                 if card_code == computer_card_str:
@@ -427,12 +424,12 @@ def run_game(center_figure, figure_cards, ai):
                                     played_computer_card = card
                                     ui_computer_cards.remove(card)
                                     card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
-                                # remove the card from computers hand
+                                    # remove the card from computers hand
                                     if computer_card_str in game.computer.hand:
                                         game.computer.hand.remove(computer_card_str)
                                     break
 
-                    # computers turn result
+                        # computers turn result
                         round_phase = "cards_revealed"
                         phase_timer = pygame.time.get_ticks() + 1500
                         break
@@ -548,7 +545,7 @@ def run_game(center_figure, figure_cards, ai):
             played_computer_card = None
             round_outcome = None
             tie_break_cards = []  # Added this
-            in_tiebreak = False   # Added this
+            in_tiebreak = False  # Added this
 
             if figure_cards:
                 next_figure = figure_cards.popleft()
@@ -609,12 +606,12 @@ def run_game(center_figure, figure_cards, ai):
 
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
-        round_number =18 - len(player.hand) + skip_count + 1
-        if round_number >= 15:   #taeheon
+        round_number = 18 - len(player.hand) + skip_count + 1
+        if round_number >= 18:  # taeheon
             game.declare_winner()
             pygame.display.flip()
             pygame.time.wait(5000)
-            return # taeheon
+            return  # taeheon
 
         score_line = f"Round: {round_number} | You: {player.score}  AI: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
