@@ -18,13 +18,13 @@ MARGIN, FPS = 20, 30
 # === Colors ===
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GREEN = (0, 150, 0)
-RED = (200, 0, 0)
+GREEN = (20, 140, 70)
+RED = (150, 10, 10)
 BLUE = (0, 0, 200)
 LIGHT_BLUE = (100, 100, 255)
 GRAY = (200, 200, 200)
 LIGHT_GRAY = (230, 230, 230)
-YELLOW = (255, 255, 0)
+YELLOW = (210, 180, 60)
 GOLD = (255, 215, 0)
 
 # poker table colour
@@ -73,7 +73,7 @@ class GameUI:
         self.screen.blit(title_surf, title_rect)
 
         # Assigning each button to the right colour
-        levels = [("Easy", GREEN), ("Normal", GOLD), ("Hard", RED)] # I think this is more visually engaging
+        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)] # I think this is more visually engaging
         buttons = []
 
         for i, (label, color) in enumerate(levels):
