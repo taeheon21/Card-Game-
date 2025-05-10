@@ -316,51 +316,6 @@ class Game:
 
         # Check if players are restricted from playing 3s and 10s (5676101)
         if user.used_special:
-            # So, after using a special card, 3s and 10s will be checked
-            has_three_or_ten = False
-            for card in user.hand:
-                if card.startswith('3') or card.startswith('10'):
-                    has_three_or_ten = True
-                    break  # No need to check further if we found one
-
-            if not has_three_or_ten:
-                print("You don't have 3s or 10s after using special cards, therefore you skip this round!")
-                return "You don't have 3s or 10s after using special cards, therefore you skip this round!"
-                # Important: we need to reset the special card usage bool value
-                user.used_special = False
-
-                # Computer gets card
-                drawn_card = self.deck.draw_figure_card()
-                if drawn_card is not None:
-                    fig_card_id, fig_card_value = drawn_card
-                    computer.add_score(fig_card_value)
-                    print(f"Computer gets the figure card {fig_card_id} worth {fig_card_value} points.")
-
-                return  f"Computer gets the figure card {fig_card_id} worth {fig_card_value} points."
-
-        if computer.used_special:
-            # The same rule applies to computer
-            comp_has_three_or_ten = False
-            for c in computer.hand:
-                if c.startswith('3') or c.startswith('10'):
-                    comp_has_three_or_ten = True
-                    break
-
-            if not comp_has_three_or_ten:
-                print("Computer doesn't have 3s or 10s after using special cards, therefore computer skips this round!")
-                return "Computer doesn't have 3s or 10s after using special cards, therefore computer skips this round!"
-                computer.used_special = False
-
-                # Player gets card
-                drawn_figure = self.deck.draw_figure_card()
-                if drawn_figure is not None:  # Check for empty draws (unlikely event)
-                    figure_id, figure_value = drawn_figure
-                    user.add_score(figure_value)
-                    print(f"You get the figure card {figure_id} worth {figure_value} points.")
-
-                return f"You get the figure card {figure_id} worth {figure_value} points."
-        '''
-        if user.used_special:
             if user_card.startswith('3') or user_card.startswith('10'):
                 print("You don't have 3s or 10s after using special cards, therefore you skip this round!")
                 user.used_special = False
@@ -375,7 +330,7 @@ class Game:
                 print(f"You get the figure card {figure_id} worth {figure_value} points.")
                 user.add_score(figure_value)
                 return "Computer skipped due to 3/10 rule."
-        '''
+
         print(f"Figure card on the table: {figure_id} (worth {figure_value} points)")
         print(f"You played: {user_card}")
         print(f"Computer played: {computer_card}")
