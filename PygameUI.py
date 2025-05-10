@@ -348,7 +348,7 @@ def run_game(center_figure, figure_cards, ai):
                         warning = "No skips left!"
                         warning_timer = pygame.time.get_ticks() + 2000
 
-                    if not player.hand or not computer.hand or player.score >= 91 or computer.score >= 91:
+                    if not player.hand or not computer.hand or player.score >= 101 or computer.score >= 101:
                         game.declare_winner()
                         pygame.display.flip()
                         pygame.time.wait(5000)
@@ -470,7 +470,7 @@ def run_game(center_figure, figure_cards, ai):
 
                 # Check for win condition
                 # Updated winner check using Game method
-            if player.score >= 91 or computer.score >= 91:
+            if player.score >= 101 or computer.score >= 101:
                 game.declare_winner()  # Handles print logic
                 pygame.display.flip()
                 pygame.time.wait(10000)
