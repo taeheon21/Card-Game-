@@ -97,7 +97,7 @@ class Game:
                 print("You don't have 3s or 10s after using special cards, therefore you skip this round!")
 
                 # Important: we need to reset the special card usage bool value
-                player.used_special = False
+                user.used_special = False
 
                 # Computer gets card
                 drawn_card = self.deck.draw_figure_card()
