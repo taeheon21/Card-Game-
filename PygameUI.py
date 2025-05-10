@@ -28,7 +28,7 @@ YELLOW = (255, 255, 0)
 GOLD = (255, 215, 0)
 
 # poker table colour
-green = (33, 124, 66)
+green = (33, 124, 66) 
 
 
 class GameUI:
@@ -118,9 +118,6 @@ def announce_winner(champion):
 # Creating a window(The playing area):
 screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
-
-# coloring the playing area
-green = (10, 110, 10)
 
 # cards size and colour
 CARD_WIDTH = 60
