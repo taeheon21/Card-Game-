@@ -19,15 +19,14 @@ MARGIN, FPS = 20, 30
 # === Colors ===
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GREEN = (0, 150, 0)
-RED = (200, 0, 0)
+GREEN = (20, 140, 70)
+RED = (150, 10, 10)
 BLUE = (0, 0, 200)
 LIGHT_BLUE = (100, 100, 255)
 GRAY = (200, 200, 200)
 LIGHT_GRAY = (230, 230, 230)
-YELLOW = (255, 255, 0)
+YELLOW = (210, 180, 60)
 GOLD = (255, 215, 0)
-
 # poker table colour
 green = (33, 124, 66)
 
@@ -64,20 +63,20 @@ class GameUI:
 
     def select_difficulty_screen(self):
         self.screen.fill(green)
-        font_title = pygame.font.SysFont('arial', 60)
+        font_title = pygame.font.SysFont('arial', 50)
         font_button = pygame.font.SysFont('arial', 40)
 
         # the title
-        title_text = "Select Difficulty Level"
+        title_text = "Select the AI Difficulty Level: "
         title_surf = font_title.render(title_text, True, GOLD)
-        title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 100))
+        title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 160))
 
         # the buttons with hover effects
-        levels = ["Easy", "Normal", "Hard"]
+        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)]  # I think this is more visually engaging
         buttons = []
-        for i, level in enumerate(levels):
-            btn_rect = pygame.Rect(400, 200 + i * 120, 400, 80)
-            buttons.append((btn_rect, level))
+        for i, (label, color) in enumerate(levels):
+            btn_rect = pygame.Rect(440, 300 + i * 100, 280, 60)
+            buttons.append((btn_rect, label, color))
 
         while True:
             mouse_pos = pygame.mouse.get_pos()
@@ -85,15 +84,16 @@ class GameUI:
             self.screen.fill(green)
             self.screen.blit(title_surf, title_rect)
 
-            for rect, label in buttons:
+            for rect, label, color in buttons:
                 is_hover = rect.collidepoint(mouse_pos)
-                color = LIGHT_BLUE if is_hover else BLUE
-                pygame.draw.rect(self.screen, color, rect, border_radius=10)
+                fill_color = LIGHT_BLUE if is_hover else color
+                pygame.draw.rect(self.screen, fill_color, rect, border_radius=10)
                 pygame.draw.rect(self.screen, WHITE, rect, 3, border_radius=10)
 
                 text = font_button.render(label, True, WHITE)
                 text_rect = text.get_rect(center=rect.center)
                 self.screen.blit(text, text_rect)
+
 
             pygame.display.flip()
 
@@ -102,9 +102,9 @@ class GameUI:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    for rect, level in buttons:
+                    for rect, label, color in buttons:
                         if rect.collidepoint(event.pos):
-                            return level.lower()
+                            return label.lower()
 
 
 game_ui = GameUI()
