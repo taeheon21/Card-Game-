@@ -448,7 +448,7 @@ def run_game(center_figure, figure_cards, ai):
                 round_phase = "result_display"
                 phase_timer = pygame.time.get_ticks() + 1500 ''' # As part of error fix, I will just import result from game.py handle tie
 
-            round_phase = "result display"
+            round_phase = "result_display"
             phase_timer = pygame.time.get_ticks() + 1500
 
         elif round_phase == "result_display" and pygame.time.get_ticks() > phase_timer:
