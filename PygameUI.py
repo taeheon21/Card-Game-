@@ -290,8 +290,7 @@ def build_computer_hand_objects(card_strs):
 round_in_progress = False
 round_ended = False
 round_end_time = 0
-SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
-                               BUTTON_HEIGHT)
+SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,BUTTON_HEIGHT) #place it in the bottom-left corener
 
 
 def run_game(center_figure, figure_cards, ai):
@@ -308,6 +307,9 @@ def run_game(center_figure, figure_cards, ai):
 
     played_player_card = None
     played_computer_card = None
+    skips_allowed = 2
+    skips_used = 0
+
 
     while game_is_running:
         screen.fill(green)
@@ -320,16 +322,25 @@ def run_game(center_figure, figure_cards, ai):
                 game_is_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
-                    if figure_cards:
+                    if skips_used < skips_allowed and figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
                         center_figure_card.image = pygame.transform.scale(center_figure_card.image,
                                                                           (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                         center_figure_card.value = next_figure[1]
                         center_figure = next_figure
+                        skips_used +=1
                     else:
+                        warning = "No skips left!"
+                        warning_timer = pygame.time.get_ticks() + 2000
+                    
+
+                    if not player.hand or not computer.hand or player.score >= 91 or computer.score >= 91:
+                        game.declare_winner()
+                        pygame.display.flip()
+                        pygame.time.wait(5000)
                         game_is_running = False
-                    continue  # Skip rest of the loop for this click
+
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
@@ -412,7 +423,7 @@ def run_game(center_figure, figure_cards, ai):
                     # Resolve round
 
         if round_phase == "cards_revealed" and pygame.time.get_ticks() > phase_timer:
-            player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
+            player_card_str = f"{played_player_card.value}{played_player_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
             round_phase = "result_display"
@@ -472,11 +483,12 @@ def run_game(center_figure, figure_cards, ai):
         # Scoreboard
         font = pygame.font.SysFont(None, 32)
         round_number = 18 - len(player.hand)
-        score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {player.skips_left}"
+        score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {skips_allowed - skips_used}"
         score_text = font.render(score_line, True, WHITE)
         screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 10))
         # Draw Skip Button
-        pygame.draw.rect(screen, RED, SKIP_BUTTON_RECT)
+        button_color = RED if skips_used < skips_allowed else LIGHT_GRAY
+        pygame.draw.rect(screen, button_color, SKIP_BUTTON_RECT)
         font = pygame.font.SysFont(None, 30)
         skip_text = font.render("SKIP", True, WHITE)
         skip_text_rect = skip_text.get_rect(center=SKIP_BUTTON_RECT.center)
