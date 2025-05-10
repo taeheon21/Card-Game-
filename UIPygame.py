@@ -30,21 +30,73 @@ GOLD = (255, 215, 0)
 # poker table colour
 green = (33, 124, 66)
 
+# function to draw background
+def draw_background(screen, background=None):
+    if background:
+        screen.blit(background, (0, 0))
+    else:
+        screen.fill(green)
+
+# function to load and play background music
+def load_background_music():
+    music_folder = os.path.join("assets", "sounds")
+    # the  music file
+    music_file = "game music.mp3"
+    music_path = os.path.join(music_folder, music_file)
+    
+    if not os.path.exists(music_path):
+        print(f"Music file not found: {music_path}")
+        return False
+    
+    try:
+        pygame.mixer.music.load(music_path)
+        pygame.mixer.music.set_volume(MUSIC_VOLUME)
+        pygame.mixer.music.play(-1)  # -1 means loop indefinitely
+        print(f"Now playing: {music_file}")
+        return True
+    except pygame.error as e:
+        print(f"Error loading music: {e}")
+        return False
+
+
 
 class GameUI:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Get 'Em")
+        
+        # loading the background image
+        background_path = os.path.join("assets", "cards", "poker_table.jpg")
+        try:
+            self.background = pygame.image.load(background_path)
+            self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        except pygame.error:
+                print(f"Could not load background image: {background_path}")
+                print("Using solid color instead")
+                self.background = None
+        
+        # load background music
+        self.music_playing = load_background_music()
+       
+    # toggle music 
+    def toggle_music(self):
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.pause()
+            return False
+        else:
+            pygame.mixer.music.unpause()
+            return True
 
     def displayWelcomeScreen(self):
-        self.screen.fill(green)
+        draw_background(self.screen, self.background)
         font = pygame.font.SysFont(None, 40)
 
         welcome_message = ["\n****** Get 'Em Card Game ******",
                            "You vs Computer - good luck!",
                            "Highest card wins each round - simple!",
-                           "Press key to start"]
-
+                           "Press key to start",
+                           "",
+                           "M = Toggle Music"]  
         for i, line in enumerate(welcome_message):
             text = font.render(line, True, WHITE)
             text_rect = text.get_rect(center=(self.screen.get_width() // 2, 240 + i * 60))
@@ -59,10 +111,14 @@ class GameUI:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    waiting = False
+                    if event.key == pygame.K_m:  # m key toggles music
+                        self.music_playing = self.toggle_music()
+                    else:
+                        waiting = False
+
 
     def select_difficulty_screen(self):
-        self.screen.fill(green)
+        draw_background(self.screen, self.background)
         font_title = pygame.font.SysFont('arial', 50)
         font_button = pygame.font.SysFont('arial', 40)
 
@@ -81,7 +137,7 @@ class GameUI:
         while True:
             mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.fill(green)
+            draw_background(self.screen, self.background)
             self.screen.blit(title_surf, title_rect)
 
             for rect, label, color in buttons:
@@ -314,13 +370,16 @@ def run_game(center_figure, figure_cards, ai):
     played_computer_card = None
     skips_allowed = 2
     skips_used = 0
+    
+    # get the background from the game_ui instance
+    background = game_ui.background if hasattr(game_ui, 'background') else None
 
     # Added for tracking tie state (5676101)
     tie_break_cards = []  # Cards played during tie
     in_tiebreak = False
 
     while game_is_running:
-        screen.fill(green)
+        draw_background(screen, background)  # use the background image instead of fill
 
         if warning and pygame.time.get_ticks() > warning_timer:
             warning = ""
@@ -560,9 +619,33 @@ def run_game(center_figure, figure_cards, ai):
                 # Check for win condition
                 # Updated winner check using Game method
             if player.score >= 91 or computer.score >= 91:
-                game.declare_winner()  # Handles print logic
+                # annoucing the winner
+                winner = "Player" if player.score >= 91 else "AI"
+                font = pygame.font.SysFont('arial', 72)
+                winner_text = f"The winner: {winner}!"
+                winner_surface = font.render(winner_text, True, GOLD)
+                
+                # background for the announcmient text
+                winner_bg = pygame.Surface((winner_surface.get_width() + 60, winner_surface.get_height() + 40), pygame.SRCALPHA)
+                pygame.draw.rect(winner_bg, (0, 0, 0, 200), winner_bg.get_rect(), border_radius=20)
+                pygame.draw.rect(winner_bg, GOLD, winner_bg.get_rect(), 3, border_radius=20)
+                winner_bg.blit(winner_surface, (30, 20))
+                
+                # the final score 
+                score_font = pygame.font.SysFont('arial', 36)
+                score_text = f"Final score : Player: {player.score} | AI: {computer.score}"
+                score_surface = score_font.render(score_text, True, WHITE)
+                score_bg = pygame.Surface((score_surface.get_width() + 40, score_surface.get_height() + 20), pygame.SRCALPHA)
+                pygame.draw.rect(score_bg, (0, 0, 0, 180), score_bg.get_rect(), border_radius=15)
+                score_bg.blit(score_surface, (20, 10))
+                
+                # displaying the winner and the score
+                screen.blit(winner_bg, (screen.get_width() // 2 - winner_bg.get_width() // 2, 
+                                      screen.get_height() // 2 - winner_bg.get_height() // 2))
+                screen.blit(score_bg, (screen.get_width() // 2 - score_bg.get_width() // 2,
+                                     screen.get_height() // 2 + winner_bg.get_height()))
                 pygame.display.flip()
-                pygame.time.wait(10000)
+                pygame.time.wait(5000)
                 return
 
             round_phase = "waiting_for_play"
@@ -664,5 +747,8 @@ def run_game(center_figure, figure_cards, ai):
 
 
 run_game(center_figure, figure_cards, ai)
+
+# stop music before quitting
+pygame.mixer.music.stop()
 pygame.quit()
 sys.exit()
