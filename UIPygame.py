@@ -526,7 +526,7 @@ def run_game(center_figure, figure_cards, ai):
 
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
-        round_number = 10 - len(player.hand) + skip_count
+        round_number =18 - len(player.hand) + skip_count + 1
         score_line = f"Round: {round_number} | You: {player.score}  CPU: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
 
