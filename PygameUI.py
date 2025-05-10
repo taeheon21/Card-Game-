@@ -439,14 +439,17 @@ def run_game(center_figure, figure_cards, ai):
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
 
-            if round_outcome == "tie":
+            '''if round_outcome == "tie":
                 # Let game logic handle tie rules (sum 12/19, special cards, coin flip)
                 game.handle_tie()
                 warning = "Tiebreaker resolved!"
                 warning_timer = pygame.time.get_ticks() + 3000
             else:
                 round_phase = "result_display"
-                phase_timer = pygame.time.get_ticks() + 1500
+                phase_timer = pygame.time.get_ticks() + 1500 ''' # As part of error fix, I will just import result from game.py handle tie
+
+            round_phase = "result display"
+            phase_timer = pygame.time.get_ticks() + 1500
 
         elif round_phase == "result_display" and pygame.time.get_ticks() > phase_timer:
             selected_card = None
