@@ -275,7 +275,7 @@ class Game:
             self.play_round()
         self.declare_winner()
 
-    def deal_cards(self): #5676101
+    def deal_cards(self):
         # Clear players' hands
         for player in self.players:
             player.hand = []
@@ -314,22 +314,48 @@ class Game:
         print(f"Your score: {self.players[0].score}")
         print(f"Computer score: {self.players[1].score}")
 
-        # Check if players are restricted from playing 3s and 10s (5676101)
+        # Check if players are restricted from playing 3s and 10s (UNCHANGED)
         if user.used_special:
-            if user_card.startswith('3') or user_card.startswith('10'):
+            # So, after using a special card, 3s and 10s will be checked
+            has_three_or_ten = False
+            for card in user.hand:
+                if card.startswith('3') or card.startswith('10'):
+                    has_three_or_ten = True
+                    break  # No need to check further if we found one
+
+            if not has_three_or_ten:
                 print("You don't have 3s or 10s after using special cards, therefore you skip this round!")
                 user.used_special = False
-                print(f"Computer gets the figure card {figure_id} worth {figure_value} points.")
-                computer.add_score(figure_value)
-                return "Invalid move: 3/10 restriction."
+
+                # Computer gets card
+                drawn_card = self.deck.draw_figure_card()
+                if drawn_card is not None:
+                    fig_card_id, fig_card_value = drawn_card
+                    computer.add_score(fig_card_value)
+                    print(f"Computer gets the figure card {fig_card_id} worth {fig_card_value} points.")
+
+                return f"Computer gets the figure card {fig_card_id} worth {fig_card_value} points."
 
         if computer.used_special:
-            if computer_card.startswith('3') or computer_card.startswith('10'):
+            # The same rule applies to computer
+            comp_has_three_or_ten = False
+            for c in computer.hand:
+                if c.startswith('3') or c.startswith('10'):
+                    comp_has_three_or_ten = True
+                    break
+
+            if not comp_has_three_or_ten:
                 print("Computer doesn't have 3s or 10s after using special cards, therefore computer skips this round!")
                 computer.used_special = False
-                print(f"You get the figure card {figure_id} worth {figure_value} points.")
-                user.add_score(figure_value)
-                return "Computer skipped due to 3/10 rule."
+
+                # Player gets card
+                drawn_figure = self.deck.draw_figure_card()
+                if drawn_figure is not None:  # Check for empty draws (unlikely event)
+                    figure_id, figure_value = drawn_figure
+                    user.add_score(figure_value)
+                    print(f"You get the figure card {figure_id} worth {figure_value} points.")
+
+                return f"You get the figure card {figure_id} worth {figure_value} points."
 
         print(f"Figure card on the table: {figure_id} (worth {figure_value} points)")
         print(f"You played: {user_card}")
@@ -340,71 +366,87 @@ class Game:
             print("Redistributing cards as one or both players have no cards left!")
             self.deck.redistribute_number_cards()
             self.deal_cards()
-
+            
         # Special cards logic (2 of Spades and 9 of Spades)
         # This function returns either True or False if card is 2S or 9S
-        def special_card(card: str) -> bool:
+        def special_card(card):
             return card in ('2S', '9S')
 
         user_special = special_card(user_card)
         computer_special = special_card(computer_card)
-        
-        #If any player played special
-        if user_special or computer_special: #5676101
-            #If both played special
+        # If any played special
+        if user_special or computer_special:
+            # If both played special
             if user_special and computer_special:
                 if user_card == '9S' and computer_card != '9S':
                     print("You win this round by playing special card 9 of Spades!")
                     user.add_score(figure_value)
+                    # Special card tracking modified (5676101)
+                    user.used_special = True
+                    user.last_special = user_card
+                    computer.used_special = True
+                    computer.last_special = computer_card
+                    return "You win with 9S!"
                 elif computer_card == '9S' and user_card != '9S':
                     print("Computer wins this round by playing 9 of Spades!")
                     computer.add_score(figure_value)
+                    # Same here
+                    user.used_special = True
+                    user.last_special = user_card
+                    computer.used_special = True
+                    computer.last_special = computer_card
+                    return "Computer wins with 9S!"
                 else:
-                    print("Both played special cards. Tie.")
+                    print("Both played special cards. 9S has priority.")
+
             elif user_special:
                 print(f"You win this round by playing special card {user_card}!")
                 user.add_score(figure_value)
+                user.used_special = True
+                user.last_special = user_card
+                return f"You win with special card {user_card}!"
             else:
                 print(f"Computer wins this round by playing special card {computer_card}!")
                 computer.add_score(figure_value)
-
-            # Track who used special cards (for next round restrictions)
-            if user_special:
-                user.used_special = True
-                user.last_special = user_card
-            else:
-                user.used_special = False
-
-            if computer_special:
                 computer.used_special = True
                 computer.last_special = computer_card
-            else:
-                computer.used_special = False
+                return f"Computer wins with special card {computer_card}!"
 
-            return "Special card resolution."
+            '''Original tracking worked the following way
+             if user_special:
+                 user.used_special = True
+                 user.last_special = user_card
+             else:
+                 user.used_special = False
+            
+             if computer_special:
+                 computer.used_special = True
+                 computer.last_special = computer_card
+             else:
+                 computer.used_special = False
+            
+             return "Special card resolution."'''
 
-        # Reset if no specials used
+        # Reset bool values if no specials used
         user.used_special = False
         computer.used_special = False
-        # Get number for player card (5676101)
+
         value_user = int(user.get_num(user_card))
         value_computer = int(computer.get_num(computer_card))
 
-        # 12 or 19 sum interdiction
-        # Each separate round the round sum or user and computer will be calculated
         self.user_round_sum += value_user
         if self.user_round_sum in [12, 19]:
             print(f"Warning: The sum of your played cards is {self.user_round_sum}, which is not allowed!")
             print("You automatically lose this round!")
             computer.add_score(figure_value)
-            return "Sum 12/19: You lose."
+            return "Sum of you played cards is 12 or 19. You lose!"
 
         self.computer_round_sum += value_computer
         if self.computer_round_sum in [12, 19]:
-            print(f"Warning: The sum of your played cards is {self.computer_round_sum}, which is not allowed!")
-            print("You automatically lose this round!")
+            print(f"Warning: The sum of computer's played cards is {self.computer_round_sum}, which is not allowed!")
+            print("Computer automatically loses this round!")
             user.add_score(figure_value)
-            return "CPU sum 12/19: You win."
+            return "Sum of computer cards is 12 or 19. You win!"
 
         for player in self.players:
             if player.score >= 101:
@@ -419,9 +461,15 @@ class Game:
             computer.add_score(figure_value)
             return "Computer wins!"
         else:
-            return self.handle_tie() # taeheon/ as part of error fix
+            '''Initially:
+            return self.handle_tie()'''
 
-    def handle_tie(self):
+            # Changed:
+            print(f"This round is a tie! Play another card to break the tie")
+            return "Tie, play another card!"
+
+    # Original tie handling
+    '''def handle_tie(self):
         # Handle tie situation: Players play again, if tied again, coin flip decides
         user = self.players[0]
         computer = self.players[1]
@@ -433,7 +481,7 @@ class Game:
 
 
         # Check if both players have cards left for tiebreaker
-        '''if not user.hand or not computer.hand:
+        if not user.hand or not computer.hand:
             print("Not enough cards for tiebreaker! Deciding by coin flip...")
             winner = random.choice([user, computer])  # Taeheon
             winner.add_score(figure_value)
@@ -450,7 +498,7 @@ class Game:
         computer_card = computer.hand.pop(0)
 
         print(f"Tiebreaker - You played: {user_card}")
-        print(f"Tiebreaker - Computer played: {computer_card}") '''
+        print(f"Tiebreaker - Computer played: {computer_card}") 
 
         # Check for special cards first
         def special_card(card):
@@ -508,7 +556,74 @@ class Game:
             print("Tiebreaker is also a tie! Deciding by coin flip...")  # 5662884
             winner = random.choice([user, computer])
             winner.add_score(figure_value)
-            print(f"{winner.name} wins by coin flip!")
+            print(f"{winner.name} wins by coin flip!")'''
+
+    # A new fucntion was added as replacement (5676101)
+    def handle_tie2(self, user_card, computer_card, figure_card):
+        user = self.players[0]
+        computer = self.players[1]
+        figure_value = figure_card[1]
+
+        print(f"Tiebreaker: You played: {user_card}")
+        print(f"Tiebreaker: Computer played: {computer_card}")
+
+        # Check for special cards first
+        def special_card(card):
+            return card in ('2S', '9S')
+
+        user_special = special_card(user_card)
+        computer_special = special_card(computer_card)
+
+        if user_special or computer_special:
+            if user_special and computer_special:
+                # Both played special cards - 9S has priority
+                if user_card == '9S' and computer_card != '9S':
+                    print("You win the tiebreaker by playing special card 9 of Spades!")
+                    user.add_score(figure_value)
+                    return "You win tiebreak with 9S!"
+                elif computer_card == '9S' and user_card != '9S':
+                    print("Computer wins the tiebreaker by playing special card 9 of Spades!")
+                    computer.add_score(figure_value)
+                    return "Computer wins tiebreak with 9S!"
+            
+            elif user_special:
+                # Only user played special card
+                print(f"You win the tiebreaker by playing special card {user_card}!")
+                user.add_score(figure_value)
+                return f"You win tiebreak with {user_card}!"
+            else:
+                # Only computer played special card
+                print(f"Computer wins the tiebreaker by playing special card {computer_card}!")
+                computer.add_score(figure_value)
+                return f"Computer wins tiebreak with {computer_card}!"
+
+        # Get values for comparison 
+        value_user = int(user.get_num(user_card))
+        value_computer = int(computer.get_num(computer_card))
+
+        # Card comparison
+        if value_user > value_computer:
+            print("You win the tiebreaker!")
+            user.add_score(figure_value)
+            return "You win tiebreak!"
+        elif value_user < value_computer:
+            print("Computer wins the tiebreaker!")
+            computer.add_score(figure_value)
+            return "Computer wins tiebreak!"
+        else:
+            print("Tiebreaker is also a tie! Will decide by coin flip")
+            return "Tie again, coin flip!"
+
+    # New method for coinflip had to be added (5676101)
+    def resolve_tie_coinflip(self, figure_card):
+        user = self.players[0]
+        computer = self.players[1]
+        figure_value = figure_card[1]
+
+        winner = random.choice([user, computer])
+        winner.add_score(figure_value)
+        print(f"Coin flip result: {winner.name} wins!")
+        return f"{winner.name} wins by coin flip!"
 
     def get_user_card(self):
         user = self.players[0]
@@ -524,8 +639,8 @@ class Game:
                     print(f"Invalid input! Please enter a number between 0 and {prompt_range}")
                     continue
 
-                # Handle skipping
-                """if card_index == -1:
+
+                '''if card_index == -1:
                     if user.skip_turn():  # Checks if player can skip
                         user.used_special = False
                         # User skips, so figure card goes to computer
@@ -536,7 +651,7 @@ class Game:
                         return None
                     else:
                         print("You can't skip more than 2 times in a game!")
-                        continue """
+                        continue'''
 
                 # Get the chosen card
                 chosen_card = user.hand[card_index]
@@ -558,8 +673,7 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
-    def skip_round(self, comp_card: str,
-                   figure: tuple):  # taeheon / if player choose skip, computer play random and gets point
+    def skip_round(self, comp_card: str, figure: tuple):
         self.computer.play_card(comp_card)  # remove computer card from computer's hand
         pts = figure[1]  # computer gets points
         self.computer.score += pts
@@ -576,11 +690,17 @@ class Game:
     def declare_winner(self):  # Taeheon
         # Declare final winner
         print("Game Over!")
+        return "Game over"
         print(f"Your score is {self.players[0].score}")
+        return f" Your score is {self.players[0].score}"
         print(f"Computer score is {self.players[1].score}")
+        return f" Computer score is {self.players[1].score}"
         if self.players[0].score > self.players[1].score:
             print(f"Congratulations! You win the Game!!")
+            return "Congratulations! You win the Game!!"
         elif self.players[0].score < self.players[1].score:
             print(f"Computer wins the game")
+            return "Computer wins the game!"
         else:
             print(f"The game is a tie!")
+            return "The game is a tie!"
