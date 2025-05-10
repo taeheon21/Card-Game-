@@ -365,10 +365,18 @@ class Game:
                 print(f"Computer wins this round by playing special card {computer_card}!")
                 computer.add_score(figure_value)
 
-            user.used_special = user_special
-            user.last_special = user_card if user_special else None
-            computer.used_special = computer_special
-            computer.last_special = computer_card if computer_special else None
+            # Track who used special cards (for next round restrictions)
+            if user_special:
+                user.used_special = True
+                user.last_special = user_card
+            else:
+                user.used_special = False
+
+            if computer_special:
+                computer.used_special = True
+                computer.last_special = computer_card
+            else:
+                computer.used_special = False
 
             return "Special card resolution."
 
