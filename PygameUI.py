@@ -42,7 +42,6 @@ class GameUI:
 
         welcome_message = ["\n****** Get 'Em Card Game ******",
                            "You vs Computer - good luck!",
-                           "Highest card wins each round - simple!",
                            "Press key to start"]
 
         for i, line in enumerate(welcome_message):
@@ -68,38 +67,39 @@ class GameUI:
         font_button = pygame.font.SysFont(None, 40)
 
         # Title
-        title_text = "Choose AI Difficulty"
+        title_text = "Select the AI Difficulty Level: "
         title_surf = font_title.render(title_text, True, WHITE)
-        title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 100))
+        title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 160))
         self.screen.blit(title_surf, title_rect)
 
-        # Define buttons
-        levels = ["Easy", "Normal", "Hard"]
+        # Assigning each button to the right colour
+        levels = [("Easy", GREEN), ("Normal", GOLD), ("Hard", RED)] # I think this is more visually engaging
         buttons = []
-        for i, level in enumerate(levels):
-            btn_rect = pygame.Rect(440, 200 + i * 100, 280, 60)
-            buttons.append((btn_rect, level))
 
-        # Draw buttons
-        for rect, label in buttons:
-            pygame.draw.rect(self.screen, BLUE, rect)
+        for i, (label, color) in enumerate(levels):
+            btn_rect = pygame.Rect(440, 300 + i * 100, 280, 60)
+            buttons.append((btn_rect, label, color))
+
+        
+        # Draw buttons with the right colour assigned
+        for rect, label, color in buttons:
+            pygame.draw.rect(self.screen, color, rect)
             label_surf = font_button.render(label, True, WHITE)
             label_rect = label_surf.get_rect(center=rect.center)
             self.screen.blit(label_surf, label_rect)
 
         pygame.display.flip()
 
-        # Wait for user to click a button
+        # Waiting for user to decide
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    for rect, level in buttons:
+                    for rect, label, color in buttons:
                         if rect.collidepoint(event.pos):
-                            return level.lower()
-
+                            return label.lower()
 
 game_ui = GameUI()
 game_ui.displayWelcomeScreen()
