@@ -28,7 +28,7 @@ YELLOW = (210, 180, 60)
 GOLD = (255, 215, 0)
 
 # poker table colour
-green = (33, 124, 66) 
+green = (33, 124, 66)
 
 
 class GameUI:
@@ -73,14 +73,13 @@ class GameUI:
         self.screen.blit(title_surf, title_rect)
 
         # Assigning each button to the right colour
-        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)] # I think this is more visually engaging
+        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)]  # I think this is more visually engaging
         buttons = []
 
         for i, (label, color) in enumerate(levels):
             btn_rect = pygame.Rect(440, 300 + i * 100, 280, 60)
             buttons.append((btn_rect, label, color))
 
-        
         # Draw buttons with the right colour assigned
         for rect, label, color in buttons:
             pygame.draw.rect(self.screen, color, rect)
@@ -100,6 +99,7 @@ class GameUI:
                     for rect, label, color in buttons:
                         if rect.collidepoint(event.pos):
                             return label.lower()
+
 
 game_ui = GameUI()
 game_ui.displayWelcomeScreen()
@@ -209,7 +209,7 @@ computer = Player("Computer")
 
 """player.hand = player_cards  # Assign the list of 18 cards
 computer.hand = computer_cards
-player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """ # I deleted because it's duplicated codes and casue errors
+player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """  # I deleted because it's duplicated codes and casue errors
 
 # We give the computer the actual Card objects (used in UI)
 game = Game()
@@ -217,9 +217,9 @@ game.player = player
 game.computer = computer
 
 game.players = [game.player, game.computer]
-ui_player_cards   = []
+ui_player_cards = []
 ui_computer_cards = []
-game.player.hand   = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
+game.player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
 game.computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
 # Fill player and computer hands
@@ -235,7 +235,7 @@ for idx, (value, suit) in enumerate(computer_cards):  # Computer gets every odd-
     image_path = get_card_image_path(value, suit)
     ui_computer_cards.append(Card(x, y, value, suit, image_path))
 # Update AI Player hand with string version
-#computer.hand = computer_string_hand
+# computer.hand = computer_string_hand
 ai = ComputerAI(mode=difficulty)
 
 figure_cards = deck.create_figure_cards()  # shuffled list of figure cards(imported from the deck class)
@@ -288,11 +288,13 @@ def build_computer_hand_objects(card_strs):
 round_in_progress = False
 round_ended = False
 round_end_time = 0
-SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,BUTTON_HEIGHT) #place it in the bottom-left corener
+SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
+                               BUTTON_HEIGHT)  # place it in the bottom-left corener
 
 
 def run_game(center_figure, figure_cards, ai):
     game_is_running = True
+    skip_count = 0 # to count round for skip
     selected_card = None
     computer_card = None
     round_outcome = None
@@ -308,7 +310,6 @@ def run_game(center_figure, figure_cards, ai):
     skips_allowed = 2
     skips_used = 0
 
-
     while game_is_running:
         screen.fill(green)
 
@@ -320,6 +321,21 @@ def run_game(center_figure, figure_cards, ai):
                 game_is_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
+                    player.skips_left -= 1  # taeheon
+                    computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
+                    for card in ui_computer_cards:
+                        card_str = f"{card.value}{card.suit[0].upper()}"
+                        if card_str == computer_choice:
+                            played_computer_card = card
+                            ui_computer_cards.remove(card)
+                            card.rect.topleft = (screen.get_width() // 2 - 160, screen.get_height() // 2)
+                            break
+                    round_outcome = game.skip_round(computer_choice,
+                                                    center_figure)  # using game class(skip_round) and sort it out
+                    round_phase = "result_display"
+                    phase_timer = pygame.time.get_ticks() + 1500  # taeheon
+                    skip_count += 1
+
                     if skips_used < skips_allowed and figure_cards:
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
@@ -327,18 +343,16 @@ def run_game(center_figure, figure_cards, ai):
                                                                           (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                         center_figure_card.value = next_figure[1]
                         center_figure = next_figure
-                        skips_used +=1
+                        skips_used += 1
                     else:
                         warning = "No skips left!"
                         warning_timer = pygame.time.get_ticks() + 2000
-                    
 
                     if not player.hand or not computer.hand or player.score >= 91 or computer.score >= 91:
                         game.declare_winner()
                         pygame.display.flip()
                         pygame.time.wait(5000)
                         game_is_running = False
-
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
@@ -356,7 +370,7 @@ def run_game(center_figure, figure_cards, ai):
                         warning_timer = pygame.time.get_ticks() + 3000
                         selected_card = None
                         continue
-                    # Special card logic 
+                    # Special card logic
                     if selected_card_str in ['2S', '9S']:
                         player.used_special = True
                         player.last_special = selected_card_str
@@ -424,8 +438,9 @@ def run_game(center_figure, figure_cards, ai):
             player_card_str = f"{played_player_card.value}{played_player_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
+
             if round_outcome == "tie":
-        # Let game logic handle tie rules (sum 12/19, special cards, coin flip)
+                # Let game logic handle tie rules (sum 12/19, special cards, coin flip)
                 game.handle_tie()
                 warning = "Tiebreaker resolved!"
                 warning_timer = pygame.time.get_ticks() + 3000
@@ -487,7 +502,7 @@ def run_game(center_figure, figure_cards, ai):
 
         # Scoreboard
         font = pygame.font.SysFont(None, 32)
-        round_number = 18 - len(player.hand)
+        round_number = 18 - len(player.hand) + skip_count
         score_line = f"Round: {round_number} | You: {player.score}   CPU: {computer.score}   Skips Left: {skips_allowed - skips_used}"
         score_text = font.render(score_line, True, WHITE)
         screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 10))
@@ -504,11 +519,11 @@ def run_game(center_figure, figure_cards, ai):
             font = pygame.font.SysFont(None, 30)
             warning_text = font.render(warning, True, (255, 0, 0))
             text_width = warning_text.get_width()
-    
-        # Position in top-right corner
+
+            # Position in top-right corner
             x_position = screen.get_width() - text_width - 20
-            y_position = 20  
-    
+            y_position = 20
+
             screen.blit(warning_text, (x_position, y_position))
         pygame.display.flip()
 
