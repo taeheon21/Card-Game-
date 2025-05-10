@@ -296,6 +296,7 @@ SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT -
 
 def run_game(center_figure, figure_cards, ai):
     game_is_running = True
+    round_count = 0 # to count round
     selected_card = None
     computer_card = None
     round_outcome = None
@@ -335,6 +336,7 @@ def run_game(center_figure, figure_cards, ai):
                                                     center_figure)  # using game class(skip_round) and sort it out
                     round_phase = "result_display"
                     phase_timer = pygame.time.get_ticks() + 1500  # taeheon
+                    round_count += 1
 
                     if skips_used < skips_allowed and figure_cards:
                         next_figure = figure_cards.popleft()
