@@ -275,7 +275,7 @@ class Game:
             self.play_round()
         self.declare_winner()
 
-    def deal_cards(self):
+    def deal_cards(self): #5676101
         # Clear players' hands
         for player in self.players:
             player.hand = []
@@ -314,7 +314,7 @@ class Game:
         print(f"Your score: {self.players[0].score}")
         print(f"Computer score: {self.players[1].score}")
 
-        # Check if players are restricted from playing 3s and 10s
+        # Check if players are restricted from playing 3s and 10s (5676101)
         if user.used_special:
             if user_card.startswith('3') or user_card.startswith('10'):
                 print("You don't have 3s or 10s after using special cards, therefore you skip this round!")
@@ -341,13 +341,17 @@ class Game:
             self.deck.redistribute_number_cards()
             self.deal_cards()
 
-        def special_card(card):
+        # Special cards logic (2 of Spades and 9 of Spades)
+        # This function returns either True or False if card is 2S or 9S
+        def special_card(card: str) -> bool:
             return card in ('2S', '9S')
 
         user_special = special_card(user_card)
         computer_special = special_card(computer_card)
-
-        if user_special or computer_special:
+        
+        #If any player played special
+        if user_special or computer_special: #5676101
+            #If both played special
             if user_special and computer_special:
                 if user_card == '9S' and computer_card != '9S':
                     print("You win this round by playing special card 9 of Spades!")
@@ -382,10 +386,12 @@ class Game:
         # Reset if no specials used
         user.used_special = False
         computer.used_special = False
-
+        # Get number for player card (5676101)
         value_user = int(user.get_num(user_card))
         value_computer = int(computer.get_num(computer_card))
 
+        # 12 or 19 sum interdiction
+        # Each separate round the round sum or user and computer will be calculated
         self.user_round_sum += value_user
         if self.user_round_sum in [12, 19]:
             print(f"Warning: The sum of your played cards is {self.user_round_sum}, which is not allowed!")
