@@ -314,6 +314,8 @@ def run_game(center_figure, figure_cards, ai):
 
     played_player_card = None
     played_computer_card = None
+    skips_allowed = 2
+    skips_used = 0
 
     while game_is_running:
         screen.fill(green)
@@ -341,16 +343,25 @@ def run_game(center_figure, figure_cards, ai):
                     phase_timer = pygame.time.get_ticks() + 1500
                     skip_count += 1 # taeheon
 
-                    if figure_cards:
+                    if skips_used < skips_allowed and figure_cards:    # Yaqin
                         next_figure = figure_cards.popleft()
                         center_figure_card.image = pygame.image.load(get_figure_image_path(next_figure[0]))
                         center_figure_card.image = pygame.transform.scale(center_figure_card.image,
                                                                           (FIGURE_CARD_WIDTH, FIGURE_CARD_HEIGHT))
                         center_figure_card.value = next_figure[1]
                         center_figure = next_figure
+                        skips_used += 1
                     else:
-                        game_is_running = False
-                    continue
+                        warning = "No skips left!"
+                        warning_timer = pygame.time.get_ticks() + 2000
+
+                    if not player.hand or not computer.hand or player.score >= 101 or computer.score >= 101:
+                        game.declare_winner()
+                        pygame.display.flip()
+                        pygame.time.wait(5000)
+                        game_is_running = False  # Yaqin
+
+                
 
             if round_phase == "waiting_for_play" and event.type == pygame.MOUSEBUTTONDOWN and not selected_card:
                 mouse_pos = pygame.mouse.get_pos()
@@ -361,7 +372,7 @@ def run_game(center_figure, figure_cards, ai):
                         if selected_card_str not in player.hand:
                             warning = "Card not in hand!"
                             warning_timer = pygame.time.get_ticks() + 3000
-                            continue  
+                            continue
                         if card.value in ["3", "10"] and player.last_special in ["2S", "9S"]:
                             warning = "You can't play 3 or 10 after 2S or 9S!"
                             warning_timer = pygame.time.get_ticks() + 3000
@@ -512,6 +523,12 @@ def run_game(center_figure, figure_cards, ai):
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
         round_number =18 - len(player.hand) + skip_count + 1
+        if round_number >= 15:   #taeheon
+            game.declare_winner()
+            pygame.display.flip()
+            pygame.time.wait(5000)
+            return # taeheon
+
         score_line = f"Round: {round_number} | You: {player.score}  AI: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
 
