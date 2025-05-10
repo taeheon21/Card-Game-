@@ -247,7 +247,7 @@ class Game:
             self.handle_tie()
 
 '''
-import random 
+import random
 from .deck import Deck
 from .Player import Player
 
@@ -266,15 +266,14 @@ class Game:
         self.current_figure = None
         self.deal_cards()
 
-    def start_game(self): #Taeheon
-        #Starts the game
+    def start_game(self):  # Taeheon
+        # Starts the game
         print("Game is starting...")
         while not self.game_over():
             self.round += 1
             print(f"Round {self.round}")
             self.play_round()
         self.declare_winner()
-
 
     def deal_cards(self):
         # Clear players' hands
@@ -283,16 +282,16 @@ class Game:
 
         # Distribute cards - 2 of each rank to each player with random suits
         for num in self.deck.nums:
-                num_cards = []
-                for suit in ['H', 'D', 'S', 'C']:
-                    num_cards.append(num + suit)
-                # Shuffle for randomness of suit
-                self.deck.my_shuffle(num_cards)
+            num_cards = []
+            for suit in ['H', 'D', 'S', 'C']:
+                num_cards.append(num + suit)
+            # Shuffle for randomness of suit
+            self.deck.my_shuffle(num_cards)
 
-                # Player 1 gets the first 2 cards
-                self.players[0].hand.extend(num_cards[:2])
-                # Player 2 gets the remaining 2 cards
-                self.players[1].hand.extend(num_cards[2:])
+            # Player 1 gets the first 2 cards
+            self.players[0].hand.extend(num_cards[:2])
+            # Player 2 gets the remaining 2 cards
+            self.players[1].hand.extend(num_cards[2:])
 
         for player in self.players:
             # Sort cards by number
@@ -300,8 +299,8 @@ class Game:
 
         print("Cards have been dealt; Let the game start!")
 
-# The old play_round is now commented out
-#These parameters are determined through UI class
+    # The old play_round is now commented out
+    # These parameters are determined through UI class
     def play_round(self, user_card, computer_card, figure_card):
         self.user_round_sum = 0
         self.computer_round_sum = 0
@@ -414,22 +413,23 @@ class Game:
             computer.add_score(figure_value)
             return "Computer wins!"
         else:
-            print(f"This round is a tie! Play another card to break the tie...")
-            self.current_figure = ("TieCard", figure_value)
-            self.handle_tie()
-            return "Tie resolved!"
-
+            return self.handle_tie() # taeheon/ as part of error fix
 
     def handle_tie(self):
         # Handle tie situation: Players play again, if tied again, coin flip decides
         user = self.players[0]
         computer = self.players[1]
         figure_value = self.current_figure[1]
+        winner = random.choice([user, computer])  # Taeheon
+        winner.score += figure_value 
+
+        return f"{winner.name} wins by coin flip! +{figure_value}" # taeheon
+
 
         # Check if both players have cards left for tiebreaker
-        if not user.hand or not computer.hand:
+        '''if not user.hand or not computer.hand:
             print("Not enough cards for tiebreaker! Deciding by coin flip...")
-            winner = random.choice([user, computer]) #Taeheon
+            winner = random.choice([user, computer])  # Taeheon
             winner.add_score(figure_value)
             print(f"{winner.name} wins by coin flip!")
             return
@@ -444,7 +444,7 @@ class Game:
         computer_card = computer.hand.pop(0)
 
         print(f"Tiebreaker - You played: {user_card}")
-        print(f"Tiebreaker - Computer played: {computer_card}")
+        print(f"Tiebreaker - Computer played: {computer_card}") '''
 
         # Check for special cards first
         def special_card(card):
@@ -499,7 +499,7 @@ class Game:
             print("Computer wins the tiebreaker!")
             computer.add_score(figure_value)
         else:
-            print("Tiebreaker is also a tie! Deciding by coin flip...") #5662884
+            print("Tiebreaker is also a tie! Deciding by coin flip...")  # 5662884
             winner = random.choice([user, computer])
             winner.add_score(figure_value)
             print(f"{winner.name} wins by coin flip!")
@@ -507,7 +507,7 @@ class Game:
     def get_user_card(self):
         user = self.players[0]
         prompt_range = len(user.hand) - 1
-    # Although not essential to the logic, used while, try for better error handling
+        # Although not essential to the logic, used while, try for better error handling
         while True:
             try:
                 user_input = input(f"Choose a card to play (0-{prompt_range}) or -1 to skip: ")
@@ -552,24 +552,23 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
-    def skip_round(self, comp_card: str, figure: tuple): # taeheon / if player choose skip, computer play random and gets point
-        self.computer.play_card(comp_card) # remove computer card from computer's hand
-        pts = figure[1] # computer gets points
+    def skip_round(self, comp_card: str,
+                   figure: tuple):  # taeheon / if player choose skip, computer play random and gets point
+        self.computer.play_card(comp_card)  # remove computer card from computer's hand
+        pts = figure[1]  # computer gets points
         self.computer.score += pts
         return f"Computer wins (skip) +{pts}"
 
-    
-
-    def game_over(self): #Taeheon
-        #Check if game completion conditions are satisfied(round expired or deck is empty)
+    def game_over(self):  # Taeheon
+        # Check if game completion conditions are satisfied(round expired or deck is empty)
         for player in self.players:
             if player.score >= 101:
                 return True
 
         return self.round >= self.total_rounds or self.deck.is_empty()
 
-    def declare_winner(self): #Taeheon
-        #Declare final winner
+    def declare_winner(self):  # Taeheon
+        # Declare final winner
         print("Game Over!")
         print(f"Your score is {self.players[0].score}")
         print(f"Computer score is {self.players[1].score}")
