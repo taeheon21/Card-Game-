@@ -526,6 +526,24 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             for card in ui_player_cards:
                 if card.rect.collidepoint(mouse_pos):
                     selected_card_str = f"{card.value}{card.suit[0].upper()}"
+                    
+                    # Sum validation for tiebreak (player only) (5676101)
+                    # Get the first card that was played (original tie card)
+                    if tie_break_cards and len(tie_break_cards) > 0:
+                        first_player_card = tie_break_cards[0][0]  
+                        first_card_value = first_player_card.value
+                        second_card_value = card.value
+
+                        # Convert to int and check sum
+                        first_val = int(first_card_value)
+                        second_val = int(second_card_value)
+                        card_sum = first_val + second_val
+
+                        if card_sum in [12, 19]:
+                            warning = "The sum of your placed cards can't be 12 or 19!"
+                            warning_timer = pygame.time.get_ticks() + 3000
+                            continue
+                            
                     if card.value in ["3", "10"] and player.last_special in ["2S", "9S"]:
                         warning = "You can't play 3 or 10 after 2S or 9S!"
                         warning_timer = pygame.time.get_ticks() + 3000
