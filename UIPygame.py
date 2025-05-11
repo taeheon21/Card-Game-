@@ -72,6 +72,7 @@ def load_background_music():
 
 #5640968:
 class GameUI:
+#Initializing the game UI:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Get 'Em")
@@ -98,7 +99,8 @@ class GameUI:
         else:
             pygame.mixer.music.unpause()
             return True
-
+        
+#Displays the welcome screen
     def displayWelcomeScreen(self):
         draw_background(self.screen, self.background)
         font = pygame.font.SysFont(None, 40)
@@ -186,6 +188,7 @@ screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
 
 class Card:
+#Initializing the card class:
     def __init__(self, position_x, position_y, value, suit=None, image_filename=None, width=CARD_WIDTH,
                  height=CARD_HEIGHT, border_color=BLACK):
         # set the card position and size relative to the screen
@@ -229,7 +232,7 @@ class Card:
             text_rect = text.get_rect(center=self.rect.center)
             screen.blit(text, text_rect)
 
-
+#Geet the file image path for a standard playing card 
 def get_card_image_path(value, suit):
     value_str = str(value).lower()
     suit_str = suit.lower()
@@ -242,7 +245,7 @@ start_x = (screen.get_width() - total_width) // 2
 
 deck = Deck()  # Create a new shuffled deck
 cards = deck.create_number_cards()
-random.shuffle(cards)  # maybe delete this?
+random.shuffle(cards)  
 grouped_cards = defaultdict(list)
 for card_str in cards:
     value = card_str[:-1]  # all characters except the last
@@ -332,10 +335,10 @@ center_figure_card = Card(
 round_in_progress = False
 round_ended = False
 round_end_time = 0
-SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
+skip_button = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
                                BUTTON_HEIGHT)
 #5640968.
-
+#Runs the main game loop for Get 'Em 
 def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except for the mentioned parts below.
     game_is_running = True
     skip_count = 0
@@ -371,7 +374,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             if event.type == pygame.QUIT:
                 game_is_running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if SKIP_BUTTON_RECT.collidepoint(event.pos) and round_phase == "waiting_for_play":
+                if skip_button.collidepoint(event.pos) and round_phase == "waiting_for_play":
                     if skips_used < skips_allowed:
                         player.skips_left -= 1  # taeheon
                         skip_count += 1
@@ -688,16 +691,16 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
 
         # the skip button
         skip_color = (200, 0, 0) if round_phase == "waiting_for_play" else (150, 0, 0)
-        shadow_rect = SKIP_BUTTON_RECT.copy()
+        shadow_rect = skip_button.copy()
         shadow_rect.x += 4
         shadow_rect.y += 4
         pygame.draw.rect(screen, (50, 0, 0), shadow_rect, border_radius=15)
-        pygame.draw.rect(screen, skip_color, SKIP_BUTTON_RECT, border_radius=15)
-        pygame.draw.rect(screen, WHITE, SKIP_BUTTON_RECT, 2, border_radius=15)
+        pygame.draw.rect(screen, skip_color, skip_button, border_radius=15)
+        pygame.draw.rect(screen, WHITE, skip_button, 2, border_radius=15)
 
         font = pygame.font.SysFont('arial', 34)
         skip_text = font.render("SKIP", True, WHITE)
-        skip_text_rect = skip_text.get_rect(center=SKIP_BUTTON_RECT.center)
+        skip_text_rect = skip_text.get_rect(center=skip_button.center)
         screen.blit(skip_text, skip_text_rect)
 
         # the warning message
