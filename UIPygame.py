@@ -594,9 +594,9 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
 
                 # Check for win condition
                 # Updated winner check using Game method
-            if player.score >= 91 or computer.score >= 91:
+            if player.score >= 101 or computer.score >= 101 or  round_number >= 16:
                 # annoucing the winner
-                winner = "Player" if player.score >= 91 else "AI"
+                winner = "Player" if player.score >= computer.score else "AI"
                 font = pygame.font.SysFont('arial', 72)
                 winner_text = f"The winner: {winner}!"
                 winner_surface = font.render(winner_text, True, GOLD)
