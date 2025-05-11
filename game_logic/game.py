@@ -266,7 +266,7 @@ class Game:
         self.current_figure = None
         self.deal_cards()
 
-    def start_game(self):  # Taeheon
+    def start_game(self):  # 5662884
         # Starts the game
         print("Game is starting...")
         while not self.game_over():
@@ -612,7 +612,7 @@ class Game:
         value_user = int(user.get_num(user_card))
         value_computer = int(computer.get_num(computer_card))
 
-        # Card comparison (Taeheon)
+        # Card comparison 5662884
         if value_user > value_computer:
             print("You win the tiebreaker!")
             user.add_score(figure_value)
@@ -696,13 +696,13 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
-    def skip_round(self, comp_card: str, figure: tuple): #(Taeheon)
+    def skip_round(self, comp_card: str, figure: tuple): # 5662884
         self.computer.play_card(comp_card)  # remove computer card from computer's hand
         pts = figure[1]  # computer gets points
         self.computer.score += pts
         return f"Computer wins (skip) +{pts}"
 
-    def game_over(self):  # Taeheon
+    def game_over(self):  # 5662884
         # Check if game completion conditions are satisfied(round expired or deck is empty)
         for player in self.players:
             if player.score >= 101:
@@ -710,7 +710,7 @@ class Game:
 
         return self.round >= self.total_rounds or self.deck.is_empty()
 
-    def declare_winner(self):  # Taeheon
+    def declare_winner(self):  # 5662884
         # Declare final winner
         print("Game Over!")
         return "Game over"
@@ -726,7 +726,7 @@ class Game:
             return "Computer wins the game!"
         else:
             print(f"The game is a tie!")
-            return "The game is a tie!"
+            return "The game is a tie!" #5662884
 
 """
 the first draft
