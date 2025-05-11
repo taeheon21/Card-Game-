@@ -509,6 +509,9 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
                 in_tiebreak = True
                 tie_break_cards.append((played_player_card, played_computer_card))
                 round_phase = "tiebreak_play"
+                # Store computer's first card for sum validation
+                computer_card_str = f"{played_computer_card.value}{played_computer_card.suit[0].upper()}"
+                game.set_first_comp_card(computer_card_str)
                 selected_card = None
                 computer_card = None
                 played_player_card = None
@@ -516,6 +519,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
                 round_outcome = "It's a tie! Play another card..."
                 phase_timer = pygame.time.get_ticks() + 1500
             else:
+                game.clear_tiebreak()
                 round_phase = "result_display"
                 phase_timer = pygame.time.get_ticks() + 1500
 
@@ -610,6 +614,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             round_outcome = None
             tie_break_cards = []  # Added this (5676101)
             in_tiebreak = False  # Added this (5676101)
+            game.clear_tiebreak() # Added this (5676101)
 
             if figure_cards:
                 next_figure = figure_cards.popleft()
