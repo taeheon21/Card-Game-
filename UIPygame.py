@@ -1,6 +1,7 @@
 import math  # for the warning
 import pygame
 import random
+import os
 from game_logic.deck import Deck
 from game_logic.Player import Player
 from game_logic.game import Game
@@ -46,6 +47,7 @@ def draw_background(screen, background=None):
         screen.fill(green)
 
 # function to load and play background music
+MUSIC_VOLUME = 0.5 
 def load_background_music():
     music_folder = os.path.join("assets", "sounds")
     # the  music file
