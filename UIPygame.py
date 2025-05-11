@@ -102,38 +102,52 @@ class GameUI:
         
 #Displays the welcome screen
     def displayWelcomeScreen(self):
-        draw_background(self.screen, self.background)
         font = pygame.font.SysFont(None, 40)
-
-        welcome_message = ["\n****** Get 'Em Card Game ******",
-                           "You vs Computer - good luck!",
-                           "Highest card wins each round - simple!",
-                           "Press key to start",
-                           "",
-                           "M = Toggle Music"]  
-        for i, line in enumerate(welcome_message):
-            text = font.render(line, True, WHITE)
-            text_rect = text.get_rect(center=(self.screen.get_width() // 2, 240 + i * 60))
-            self.screen.blit(text, text_rect)
-
-        pygame.display.flip()
-        # Wait for user to press a key
         waiting = True
         while waiting:
+            draw_background(self.screen, self.background)
+            mouse_pos = pygame.mouse.get_pos()
+
+            welcome_message = ["\n****** Get 'Em Card Game ******",
+                           "You vs Computer - good luck!",
+                           "Highest card wins each round - simple!",
+                           "M = Toggle Music"]  
+            for i, line in enumerate(welcome_message):
+                text = font.render(line, True, WHITE)
+                text_rect = text.get_rect(center=(self.screen.get_width() // 2, 260 + i * 60))
+                self.screen.blit(text, text_rect)
+    #Play button
+            play_button = pygame.Rect(SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT // 2 + 190, 120, 50)  # Centered button
+            mouse_pos = pygame.mouse.get_pos()
+            hovered = play_button.collidepoint(mouse_pos)
+    # Change the color when hovered
+            button_color = LIGHT_BLUE if hovered else green 
+            pygame.draw.rect(self.screen, button_color, play_button, border_radius=10)  # Button color
+            pygame.draw.rect(self.screen, WHITE, play_button, 2, border_radius=10)  # Border
+
+    # Button text
+            play_button_text = font.render("Play", True, WHITE)
+            play_button_text_rect = play_button_text.get_rect(center=play_button.center)
+            self.screen.blit(play_button_text, play_button_text_rect)
+            pygame.display.flip()
+        # Wait for user to press a key
+      
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if play_button.collidepoint(event.pos):
+                        waiting = False  
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_m:  # m key toggles music
                         self.music_playing = self.toggle_music()
-                    else:
-                        waiting = False
 #5667929.
 #5640968:
 # This function allows the user to select the AI level they want to play against
     def select_difficulty_screen(self):
         draw_background(self.screen, self.background)
+        mouse_pos = pygame.mouse.get_pos()
         font_title = pygame.font.SysFont('arial', 50)
         font_button = pygame.font.SysFont('arial', 40)
 
