@@ -232,7 +232,7 @@ class Card:
             text_rect = text.get_rect(center=self.rect.center)
             screen.blit(text, text_rect)
 
-#Geet the file image path for a standard playing card 
+#Get the file image path for a normal playing card 
 def get_card_image_path(value, suit):
     value_str = str(value).lower()
     suit_str = suit.lower()
@@ -281,19 +281,24 @@ game.computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 # fill player and computer hands with Card objects
 ui_player_cards = []
 ui_computer_cards = []
-for idx, (value, suit) in enumerate(player_cards):
-    x = start_x + (idx % 9) * (CARD_WIDTH + card_spacing)
-    y = 500 + (idx // 9) * (CARD_HEIGHT + 10)
+crd=0
+for value, suit in player_cards:
+    x = start_x + (crd % 9) * (CARD_WIDTH + card_spacing)
+    y = 500 + (crd // 9) * (CARD_HEIGHT + 10)
     image_path = get_card_image_path(value, suit)
     card = Card(x, y, value, suit, image_path)
     ui_player_cards.append(card)
+    crd+=1
 
-for idx, (value, suit) in enumerate(computer_cards):
-    x = start_x + (idx % 9) * (CARD_WIDTH + card_spacing)
-    y = 60 + (idx // 9) * (CARD_HEIGHT + 10)
+crd=0
+for value, suit in computer_cards:
+    x = start_x + (crd % 9) * (CARD_WIDTH + card_spacing)
+    y = 60 + (crd // 9) * (CARD_HEIGHT + 10)
     image_path = get_card_image_path(value, suit)
     card = Card(x, y, value, suit, image_path)
     ui_computer_cards.append(card)
+    crd+=1
+
 # initialize computer_string_hand with the correct values
 computer_string_hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
