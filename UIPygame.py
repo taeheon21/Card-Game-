@@ -364,7 +364,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
     '''Runs the main game loop for Get 'Em '''
     #more variables to manage the game
     game_is_running = True
-    skip_count = 0
+    skip_count = 0   #5662884
     selected_card = None
     computer_card = None
     round_outcome = None
@@ -399,9 +399,9 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if skip_button.collidepoint(event.pos) and round_phase == "waiting_for_play":
                     if skips_used < skips_allowed:
-                        player.skips_left -= 1  # taeheon
-                        skip_count += 1
-                        computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly
+                        player.skips_left -= 1  # 5662884
+                        skip_count += 1       #5662884
+                        computer_choice = random.choice(game.computer.hand)  # Computer choose card randomly 5662884
                         for card in ui_computer_cards:
                             card_str = f"{card.value}{card.suit[0].upper()}"
                             if card_str == computer_choice:
@@ -412,7 +412,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
                         round_outcome = game.skip_round(computer_choice,
                                                         center_figure)  # using game class(skip_round) and sort it out
                         round_phase = "result_display"
-                        phase_timer = pygame.time.get_ticks() + 1500  # taeheon
+                        phase_timer = pygame.time.get_ticks() + 1500  # 5662884
 
                         if figure_cards:
                             next_figure = figure_cards.popleft()
@@ -718,11 +718,11 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
         round_number = 18 - len(player.hand) + skip_count 
-        if round_number >= 18:  # taeheon
+        if round_number >= 18:  # 5662884 Declare winner
             game.declare_winner()
             pygame.display.flip()
             pygame.time.wait(5000)
-            return  # taeheon
+            return  # 5662884
 
         score_line = f"Round: {round_number} | You: {player.score}  AI: {computer.score}  Skips: {player.skips_left}"
         score_text = font.render(score_line, True, WHITE)
