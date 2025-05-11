@@ -504,7 +504,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             # I made the following changes (5676101)
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
 
-            # Check if it's a tie
+            # Check if it's a tie (5676101)
             if "Tie" in round_outcome and not "resolved" in round_outcome:
                 in_tiebreak = True
                 tie_break_cards.append((played_player_card, played_computer_card))
@@ -574,7 +574,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
                 computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
                 round_outcome = game.handle_tie2(player_card_str, computer_card_str, center_figure)
 
-                # Check if still tied
+                # Check if still tied (5676101)
                 if "Tie" in round_outcome and not "resolved" in round_outcome:
                     tie_break_cards.append((played_player_card, played_computer_card))
                     # Do coin flip to resolve
@@ -590,8 +590,8 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             played_player_card = None
             played_computer_card = None
             round_outcome = None
-            tie_break_cards = []  # Added this
-            in_tiebreak = False  # Added this
+            tie_break_cards = []  # Added this (5676101)
+            in_tiebreak = False  # Added this (5676101)
 
             if figure_cards:
                 next_figure = figure_cards.popleft()
