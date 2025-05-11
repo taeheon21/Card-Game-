@@ -711,15 +711,15 @@ from game_logic.deck import Deck
 from game_logic.player import Player
 
 class Game:
-    """manages the overall game flow and logic"""
+    manages the overall game flow and logic
 
     def __init__(self):
-        """initialize the game with a deck, two players, and a set number of rounds"""
+      initialize the game with a deck, two players, and a set number of rounds
         self.deck = Deck()
         self.player = Player("you")
         self.computer = Player("computer")
         self.rounds = 5 #this is new but it might make the game quicker to play (we dont need it)
 
 
-""" needs a function to start the game, another to play the round, another to check all roounds are done, and a function to check if the game is over. """
+ needs a function to start the game, another to play the round, another to check all roounds are done, and a function to check if the game is over
 """
