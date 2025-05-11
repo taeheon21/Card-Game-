@@ -275,7 +275,7 @@ class Game:
             self.play_round()
         self.declare_winner()
 
-    def deal_cards(self):
+    def deal_cards(self): #5676101
         # Clear players' hands
         for player in self.players:
             player.hand = []
@@ -314,7 +314,7 @@ class Game:
         print(f"Your score: {self.players[0].score}")
         print(f"Computer score: {self.players[1].score}")
 
-        # Check if players are restricted from playing 3s and 10s (UNCHANGED)
+        # Check if players are restricted from playing 3s and 10s (5676101)
         if user.used_special:
             # So, after using a special card, 3s and 10s will be checked
             has_three_or_ten = False
@@ -367,14 +367,14 @@ class Game:
             self.deck.redistribute_number_cards()
             self.deal_cards()
             
-        # Special cards logic (2 of Spades and 9 of Spades)
+        # Special cards logic (2 of Spades and 9 of Spades) (5676101)
         # This function returns either True or False if card is 2S or 9S
         def special_card(card):
             return card in ('2S', '9S')
 
         user_special = special_card(user_card)
         computer_special = special_card(computer_card)
-        # If any played special
+        # If any played special (5676101)
         if user_special or computer_special:
             # If both played special
             if user_special and computer_special:
@@ -463,7 +463,6 @@ class Game:
         else:
             '''Initially:
             return self.handle_tie()'''
-
             # Changed:
             print(f"This round is a tie! Play another card to break the tie")
             return "Tie, play another card!"
@@ -567,6 +566,18 @@ class Game:
         print(f"Tiebreaker: You played: {user_card}")
         print(f"Tiebreaker: Computer played: {computer_card}")
 
+        # Check if computer's card violate tiebreak sum rule (5676101)
+        # We need to check against the computer's first card in tiebreak
+        if hasattr(self, '_tiebreak_first_computer_card'):
+            first_card_value = int(self._tiebreak_first_computer_card[:-1])  # Get number from card
+            current_card_value = int(computer_card[:-1])
+            computer_tiebreak_sum = first_card_value + current_card_value
+
+            if computer_tiebreak_sum in [12, 19]:
+                print(f"Computer's tiebreak sum is {computer_tiebreak_sum}! Computer forfeits.")
+                user.add_score(figure_value)
+                return "Computer violates sum rule - You win!"
+
         # Check for special cards first
         def special_card(card):
             return card in ('2S', '9S')
@@ -616,7 +627,7 @@ class Game:
             user.add_score(figure_value)
             return
 
-        # Card comparison
+        # Card comparison (Taeheon)
         if value_user > value_computer:
             print("You win the tiebreaker!")
             user.add_score(figure_value)
@@ -629,6 +640,18 @@ class Game:
             print("Tiebreaker is also a tie! Will decide by coin flip")
             return "Tie again, coin flip!"
 
+    # Method to set computer's first tiebreak card (5676101)
+    def set_first_comp_card(self, card):
+        self._tiebreak_first_computer_card = card
+        return True
+
+        # Method to reset tiebreak state (5676101)
+    def clear_tiebreak(self):
+        if hasattr(self, '_tiebreak_first_computer_card'):
+            delattr(self, '_tiebreak_first_computer_card')
+            return True
+        return False
+
     # New method for coinflip had to be added (5676101)
     def resolve_tie_coinflip(self, figure_card):
         user = self.players[0]
@@ -640,7 +663,7 @@ class Game:
         print(f"Coin flip result: {winner.name} wins!")
         return f"{winner.name} wins by coin flip!"
 
-    def get_user_card(self):
+    def get_user_card(self): #(5676101)
         user = self.players[0]
         prompt_range = len(user.hand) - 1
         # Although not essential to the logic, used while, try for better error handling
@@ -688,7 +711,7 @@ class Game:
                 print(f"Invalid card selection! Please enter a number between 0 and {prompt_range}")
                 continue
 
-    def skip_round(self, comp_card: str, figure: tuple):
+    def skip_round(self, comp_card: str, figure: tuple): #(Taeheon)
         self.computer.play_card(comp_card)  # remove computer card from computer's hand
         pts = figure[1]  # computer gets points
         self.computer.score += pts
