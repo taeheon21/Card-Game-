@@ -1,13 +1,13 @@
-import math  # for the warning
-import pygame
-import random
-import os 
+import math  # For the warning
+import pygame # For creating the user interface
+import random # For AI easy level selection
+import os # For loading images and audios
 from game_logic.deck import Deck
 from game_logic.Player import Player
 from game_logic.game import Game
 from game_logic.Computer_AI import ComputerAI
 
-from collections import defaultdict
+from collections import defaultdict # In order to put cards into dictionary for easy access
 import sys  # for quiting the game once its over
 
 #5667929:
@@ -353,14 +353,15 @@ center_figure_card = Card(
     border_color=GOLD  # Gold border
 )
 #variables to manage the play
-round_in_progress = False
-round_ended = False
-round_end_time = 0
+round_in_progress = False #track if round is still going
+round_ended = False #track if a round has ended
+round_end_time = 0 #used for delaying purposes
 skip_button = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
                                BUTTON_HEIGHT)
 #5640968.
 def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except for the mentioned parts below.
     '''Runs the main game loop for Get 'Em '''
+    #more variables to manage the game
     game_is_running = True
     skip_count = 0
     selected_card = None
