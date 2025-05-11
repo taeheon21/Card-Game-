@@ -620,13 +620,6 @@ class Game:
             computer.add_score(figure_value)
             return
 
-        self.computer_round_sum += value_computer
-        if self.computer_round_sum in [12, 19]:
-            print(f"Warning: The sum of computer's played cards is {self.computer_round_sum}, which is not allowed!")
-            print("Computer automatically loses this round!")
-            user.add_score(figure_value)
-            return
-
         # Card comparison (Taeheon)
         if value_user > value_computer:
             print("You win the tiebreaker!")
