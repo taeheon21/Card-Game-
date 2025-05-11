@@ -2,6 +2,7 @@ import math  # For the warning
 import pygame # For creating the user interface
 import random # For AI easy level selection
 import os # For loading images and audios
+#Importing other classes for merging purposes:
 from game_logic.deck import Deck
 from game_logic.Player import Player
 from game_logic.game import Game
@@ -201,7 +202,7 @@ screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
 
 class Card:
-#Initializing the card class:
+    '''Initializing the card class'''
     def __init__(self, position_x, position_y, value, suit=None, image_filename=None, width=CARD_WIDTH,
                  height=CARD_HEIGHT, border_color=BLACK):
         # set the card position and size relative to the screen
@@ -211,7 +212,7 @@ class Card:
         self.suit = suit  # tores card's suit
         self.border_color = border_color
 
-        # load image, if not found, create a fallback drawing (backup case)
+        # load image, if not found, create the card manually (backup case)
         if image_filename is not None:
             self.image = pygame.image.load(image_filename)
             self.image = pygame.transform.scale(self.image, (width, height))
