@@ -40,16 +40,16 @@ GOLD = (255, 215, 0)
 green = (33, 124, 66)
 
 #5667929:
-# function to draw background
 def draw_background(screen, background=None):
+    ''' function to draw background'''
     if background:
         screen.blit(background, (0, 0))
     else:
         screen.fill(green)
 
-# function to load and play background music
 MUSIC_VOLUME = 0.5 
 def load_background_music():
+    '''function to load and play background music'''
     music_folder = os.path.join("assets", "sounds")
     # the  music file
     music_file = "game music.mp3"
@@ -91,8 +91,8 @@ class GameUI:
         # load background music
         self.music_playing = load_background_music()
        
-    # toggle music 
     def toggle_music(self):
+        '''toggle music'''
         if pygame.mixer.music.get_busy():
             pygame.mixer.music.pause()
             return False
@@ -100,8 +100,8 @@ class GameUI:
             pygame.mixer.music.unpause()
             return True
         
-#Displays the welcome screen
     def displayWelcomeScreen(self):
+        '''Displays the welcome screen'''
         font = pygame.font.SysFont(None, 40)
         waiting = True
         while waiting:
@@ -130,8 +130,7 @@ class GameUI:
             play_button_text_rect = play_button_text.get_rect(center=play_button.center)
             self.screen.blit(play_button_text, play_button_text_rect)
             pygame.display.flip()
-        # Wait for user to press a key
-      
+        # Wait for user to press a the "play button"
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -144,8 +143,8 @@ class GameUI:
                         self.music_playing = self.toggle_music()
 #5667929.
 #5640968:
-# This function allows the user to select the AI level they want to play against
     def select_difficulty_screen(self):
+        '''A function to allow the user to select the AI level they want to play against'''
         draw_background(self.screen, self.background)
         mouse_pos = pygame.mouse.get_pos()
         font_title = pygame.font.SysFont('arial', 50)
@@ -156,7 +155,7 @@ class GameUI:
         title_surface = font_title.render(title_text, True, GOLD)
         title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 160))
 
-        # the buttons with hover effects
+        # the buttons colors with hover effects
         levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)]  #Assigning different color value for each button 
         buttons = []
         for i, (label, color) in enumerate(levels):
@@ -220,6 +219,7 @@ class Card:
             self.image = None
 
     def draw(self, screen):
+        '''drawing cards on the screen'''
         # adding a shadow effect
         shadow_offset = 3
         shadow_rect = self.rect.copy()
@@ -227,42 +227,43 @@ class Card:
         shadow_rect.y += shadow_offset
         pygame.draw.rect(screen, (0, 0, 0, 128), shadow_rect)
 
-        # adding a gold border
+        # adding a gold border for figure cards
         if self.border_color == GOLD:
             glow_rect = self.rect.inflate(8, 8)
             pygame.draw.rect(screen, (255, 223, 128), glow_rect, border_radius=10)
             pygame.draw.rect(screen, GOLD, self.rect, 3, border_radius=8)
-        else:
+        else: #Regular border for nomral playing cards
             pygame.draw.rect(screen, WHITE, self.rect, border_radius=8)
             pygame.draw.rect(screen, self.border_color, self.rect, 2, border_radius=8)
 
         if self.image:
             screen.blit(self.image, self.rect.topleft)
         else:
-            # drawing the card
+            # drawing the card on the screen
             pygame.draw.rect(screen, WHITE, self.rect, border_radius=8)
             font = pygame.font.SysFont('arial', 30)
             text = font.render(f"{self.value} {self.suit[0].upper()}", True, BLACK)
             text_rect = text.get_rect(center=self.rect.center)
             screen.blit(text, text_rect)
 
-#Get the file image path for a normal playing card 
 def get_card_image_path(value, suit):
+    '''Get the file image path for a normal playing card '''
     value_str = str(value).lower()
     suit_str = suit.lower()
     return f"assets/cards/png/{value_str}_of_{suit_str}.png"
 
-
+#Adjusting the spaces between the normal playing cards
 card_spacing = 6
 total_width = (CARD_WIDTH * 9) + (card_spacing * 8)
 start_x = (screen.get_width() - total_width) // 2
 
 deck = Deck()  # Create a new shuffled deck
 cards = deck.create_number_cards()
-random.shuffle(cards)  
-grouped_cards = defaultdict(list)
+grouped_cards = defaultdict(list) #Creating a dictionary of type list
+
+#Grouping the cards in a dictionary for easy access to cards
 for card_str in cards:
-    value = card_str[:-1]  # all characters except the last
+    value = card_str[:-1]  
     suit_letter = card_str[-1]
     suit_lookup = {'H': 'hearts', 'D': 'diamonds', 'S': 'spades', 'C': 'clubs'}
     suit = suit_lookup[suit_letter]
@@ -270,13 +271,13 @@ for card_str in cards:
 
 player_cards = []
 computer_cards = []
-for value in range(2, 11):  # For each value from 2 to 10
+#Distribute the 36 total cards into two player's hands
+for value in range(2, 11):  # loop For each value from 2 to 10
     value_str = str(value)
     suits = grouped_cards[value_str]
 
-    # First 2 go to player, last 2 go to computer
-    player_cards.extend(suits[:2])
-    computer_cards.extend(suits[2:])
+    player_cards.extend(suits[:2]) #First 2 go to player
+    computer_cards.extend(suits[2:]) # last 2 go to computer
 
 player = Player("You")
 computer = Player("Computer")
@@ -285,14 +286,14 @@ computer = Player("Computer")
 game = Game()
 game.player = player
 game.computer = computer
-
+# This is for visual representation of the player's and computer's cards
 game.players = [game.player, game.computer]
 ui_player_cards = []
 ui_computer_cards = []
 game.player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards]
 game.computer.hand = [f"{val}{suit[0].upper()}" for val, suit in computer_cards]
 
-# fill player and computer hands with Card objects
+# Display each player and computer hands in two horizontal rows for clearer layout
 ui_player_cards = []
 ui_computer_cards = []
 crd=0
@@ -324,8 +325,8 @@ figure_cards = deck.create_figure_cards()  # shuffled list of figure cards(impor
 center_figure = deck.draw_figure_card()  # pick one figure card from the top
 
 
-# Helper function to turn figure code like 'QD' into a usable image path
 def get_figure_image_path(figure_code):
+    ''' Helper function to turn figure code like 'QD' into a usable image path'''
     figure_code = figure_code.upper()
 
     lookup = {
@@ -341,24 +342,25 @@ def get_figure_image_path(figure_code):
 
 center_image_path = get_figure_image_path(center_figure[0])  # Get the figure card image path
 
-center_figure_card = Card(
-    545, 310,  # Position
-    center_figure[1],  # Value
+#Creating a figure card object
+center_figure_card = Card( 
+    545, 310,  # Position in respect to the screen
+    center_figure[1],  
     suit=None,
     image_filename=center_image_path,
-    width=FIGURE_CARD_WIDTH,  # Bigger size
+    width=FIGURE_CARD_WIDTH,  # Bigger sizes for figure cards
     height=FIGURE_CARD_HEIGHT,
     border_color=GOLD  # Gold border
 )
-
+#variables to manage the play
 round_in_progress = False
 round_ended = False
 round_end_time = 0
 skip_button = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
                                BUTTON_HEIGHT)
 #5640968.
-#Runs the main game loop for Get 'Em 
 def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except for the mentioned parts below.
+    '''Runs the main game loop for Get 'Em '''
     game_is_running = True
     skip_count = 0
     selected_card = None
