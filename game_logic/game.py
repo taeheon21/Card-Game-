@@ -267,13 +267,15 @@ class Game:
         self.deal_cards()
 
     def start_game(self):  # 5662884
-        # Starts the game
-        print("Game is starting...")
+        """Run the main game loop until win condition or round limit has met."""
+        
+        print("Game is starting...")  # Notify that the game is starting
         while not self.game_over():
             self.round += 1
             print(f"Round {self.round}")
+             # play_round is driven by UI; here we simply advance rounds
             self.play_round()
-        self.declare_winner()
+        self.declare_winner() # Announce final results
 
     def deal_cards(self): #5676101
         # Clear players' hands
@@ -612,7 +614,7 @@ class Game:
         value_user = int(user.get_num(user_card))
         value_computer = int(computer.get_num(computer_card))
 
-        # Card comparison 5662884
+        # Card comparison, Determine winner by higher card value 5662884
         if value_user > value_computer:
             print("You win the tiebreaker!")
             user.add_score(figure_value)
@@ -697,8 +699,21 @@ class Game:
                 continue
 
     def skip_round(self, comp_card: str, figure: tuple): # 5662884
-        self.computer.play_card(comp_card)  # remove computer card from computer's hand
-        pts = figure[1]  # computer gets points
+        """Handle a skipped round: computer wins by default and scores points. 
+        Because only user can play skip.
+
+            comp_card (str): the card the computer would have played. 
+            Because computer wouldn't know if user will play skip, 
+            so computer will play card.
+            figure (tuple): the figure card (code, value).
+
+        Returns:
+            summary of skip outcome.
+        """
+        # remove computer card from computer's hand
+        self.computer.play_card(comp_card)  
+        # computer gets points
+        pts = figure[1]  
         self.computer.score += pts
         return f"Computer wins (skip) +{pts}"
 
