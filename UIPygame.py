@@ -1,6 +1,7 @@
 import math  # for the warning
 import pygame
 import random
+import os 
 from game_logic.deck import Deck
 from game_logic.Player import Player
 from game_logic.game import Game
@@ -15,6 +16,7 @@ pygame.init()
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 720
 BUTTON_WIDTH, BUTTON_HEIGHT = 120, 40
 MARGIN, FPS = 20, 30
+MUSIC_VOLUME = 0.3  
 # cards size and colour
 CARD_WIDTH = 60
 CARD_HEIGHT = 90
