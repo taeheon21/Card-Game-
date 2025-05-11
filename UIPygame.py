@@ -741,9 +741,9 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
         pygame.draw.rect(screen, WHITE, skip_button, 2, border_radius=15)
 
         font = pygame.font.SysFont('arial', 34)
-        skip_text = font.render("SKIP", True, WHITE)
-        skip_text_rect = skip_text.get_rect(center=skip_button.center)
-        screen.blit(skip_text, skip_text_rect)
+        skip_btn = font.render("SKIP", True, WHITE)
+        skip_rect = skip_btn.get_rect(center=skip_button.center)
+        screen.blit(skip_btn, skip_rect)
 
         # the warning message
         if warning:
