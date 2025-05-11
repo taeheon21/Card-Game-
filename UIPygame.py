@@ -647,8 +647,8 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
 
         # round outcome results
         if round_outcome:
-            font = pygame.font.SysFont('arial', 48)  # increasing the font
-            result_text = font.render(round_outcome, True, GOLD)
+            font = pygame.font.SysFont('arial', 44)  # increasing the font
+            result_text = font.render(round_outcome, True, YELLOW)
             # adding a  transparent background with a glow effect
             text_surface = pygame.Surface((result_text.get_width() + 40, result_text.get_height() + 20),
                                           pygame.SRCALPHA)
@@ -667,7 +667,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
         pygame.draw.rect(label_bg, GOLD, label_bg.get_rect(), 1, border_radius=8)
         label_bg.blit(label, (10, 5))  # modify the position of text
         screen.blit(label_bg, (center_figure_card.rect.centerx - label_bg.get_width() // 2,
-                               center_figure_card.rect.top - 30))  # adjust the position slightly upwards
+                               center_figure_card.rect.top - 35))  # adjust the position slightly upwards
 
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
