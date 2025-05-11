@@ -1,16 +1,24 @@
-# test_ai_interactive.py
-# Console-based interactive test for ComputerAI modes
-#!!! "python -m game_logic.test_ai" type this to run code in vsc terminal
+"""Console-based interactive test for ComputerAI in different modes.
+
+Run with:
+    python -m game_logic.test_ai
+"""
 
 import random
 from .Computer_AI import ComputerAI
 from .game import Game
 
 
-MODE_MAP = {'1': 'easy', '2': 'normal', '3': 'hard'}
+MODE_MAP = {
+    '1': 'easy',
+    '2': 'normal',
+    '3': 'hard',
+}
+
 
 def main():
-    # Select mode
+    """Play a 15‐round console game between human and ComputerAI."""
+    # Select AI mode
     print("Select AI mode:")
     print("1: easy (random)")
     print("2: normal (rule tree)")
@@ -19,11 +27,11 @@ def main():
     mode = MODE_MAP.get(choice, 'easy')
     print(f"Running in {mode} mode")
 
-    # Load AI
+    # Load Q-learning AI only in hard mode
     qpath = 'q_table.pkl' if mode == 'hard' else None
     ai = ComputerAI(mode=mode, Qpath=qpath)
 
-    # 3) Start one Game instance so hands persist
+    # Start Game. And identify who's player
     game = Game()
     human = game.players[0]
     computer = game.players[1]
@@ -32,19 +40,19 @@ def main():
     for rnd in range(1, rounds + 1):
         print(f"--- Round {rnd} ---")
 
-        # draw figure card for this round
+        # Draw and announce the figure card for this round
         game.current_figure = game.deck.draw_figure_card()
         fig_code, fig_val = game.current_figure
-        print(f"Figure card: {fig_code} (value {fig_val})")
+        print(f"Figure card: {fig_code} (value {fig_val})\n")
 
-        # show human hand
+        # Display human player's hand 
         print("Your hand:")
-        for i, c in enumerate(human.hand):
-            print(f"  {i}: {c}")
+        for i, card in enumerate(human.hand):
+            print(f"  {i}: {card}")
 
         # human plays
         while True:
-            sel = input(f"Choose a card index (0-{len(human.hand) - 1}): ")
+            sel = input(f"Choose a card index (0-{len(human.hand)-1}): ")
             if not sel.isdigit():
                 print("Enter a number.")
                 continue
@@ -54,20 +62,20 @@ def main():
                 human.play_card(human_card)
                 break
             print("Index out of range.")
-        print(f"You played: {human_card}")
+        print(f"\nYou played: {human_card}\n")
 
-        # show computer hand before play
+        # Show computer's remaining hand before AI decision, so I can judge wheather AI's decision is correct.
         print("Computer hand before play:")
         print(", ".join(computer.hand))
 
-        # computer plays
+        # AI plays one card based on selected mode
         before = set(computer.hand)
         ai.play(game)
         played = before - set(computer.hand)
         comp_card = played.pop() if played else None
-        print(f"Computer played: {comp_card}")
+        print(f"Computer played: {comp_card}\n")
 
-        # determine winner and score assignment
+        # Determine round winner and update scores
         hnum = int(human_card[:-1])
         cnum = int(comp_card[:-1])
         if hnum > cnum:
@@ -79,10 +87,14 @@ def main():
         else:
             print(">>> It's a tie! (no figure awarded)")
 
-        print(f"Scores -> You: {human.score} | Computer: {computer.score}\n")
+        # Display updated scores
+        print(f"\nScores -> You: {human.score} | "
+              f"Computer: {computer.score}\n")
 
+    # End of all rounds
     print(f"All {rounds} rounds completed.")
-    print(f"Final Scores -> You: {human.score} | Computer: {computer.score}")
+    print(f"Final Scores -> You: {human.score} | Computer: "
+          f"{computer.score}")
 
 
 if __name__ == '__main__':
