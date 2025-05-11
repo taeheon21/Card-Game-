@@ -1,4 +1,3 @@
-# Work To Do: handle specical rules + add background audio
 import math  # for the warning
 import pygame
 import random
@@ -10,11 +9,19 @@ from game_logic.Computer_AI import ComputerAI
 from collections import defaultdict
 import sys  # for quiting the game once its over
 
-# === Game Constants ===5667929
+#5667929:
+# === Game Constants ===
 pygame.init()
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 720
 BUTTON_WIDTH, BUTTON_HEIGHT = 120, 40
 MARGIN, FPS = 20, 30
+# cards size and colour
+CARD_WIDTH = 60
+CARD_HEIGHT = 90
+
+# figure cards size
+FIGURE_CARD_WIDTH = 70
+FIGURE_CARD_HEIGHT = 105
 
 # === Colors ===
 WHITE = (255, 255, 255)
@@ -27,9 +34,10 @@ GRAY = (200, 200, 200)
 LIGHT_GRAY = (230, 230, 230)
 YELLOW = (210, 180, 60)
 GOLD = (255, 215, 0)
-# poker table colour
+# poker table colour:5640968
 green = (33, 124, 66)
 
+#5667929:
 # function to draw background
 def draw_background(screen, background=None):
     if background:
@@ -57,15 +65,16 @@ def load_background_music():
     except pygame.error as e:
         print(f"Error loading music: {e}")
         return False
+#5667929.
 
-
-
+#5640968:
 class GameUI:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Get 'Em")
-        
-        # loading the background image
+#5640968.
+#5667929:
+        # loading the background image:
         background_path = os.path.join("assets", "cards", "poker_table.jpg")
         try:
             self.background = pygame.image.load(background_path)
@@ -115,8 +124,9 @@ class GameUI:
                         self.music_playing = self.toggle_music()
                     else:
                         waiting = False
-
-
+#5667929.
+#5640968:
+# This function allows the user to select the AI level they want to play against
     def select_difficulty_screen(self):
         draw_background(self.screen, self.background)
         font_title = pygame.font.SysFont('arial', 50)
@@ -124,11 +134,11 @@ class GameUI:
 
         # the title
         title_text = "Select the AI Difficulty Level: "
-        title_surf = font_title.render(title_text, True, GOLD)
-        title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, 160))
+        title_surface = font_title.render(title_text, True, GOLD)
+        title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 160))
 
         # the buttons with hover effects
-        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)]  # I think this is more visually engaging
+        levels = [("Easy", GREEN), ("Normal", YELLOW), ("Hard", RED)]  #Assigning different color value for each button 
         buttons = []
         for i, (label, color) in enumerate(levels):
             btn_rect = pygame.Rect(440, 300 + i * 100, 280, 60)
@@ -138,7 +148,7 @@ class GameUI:
             mouse_pos = pygame.mouse.get_pos()
 
             draw_background(self.screen, self.background)
-            self.screen.blit(title_surf, title_rect)
+            self.screen.blit(title_surface, title_rect)
 
             for rect, label, color in buttons:
                 is_hover = rect.collidepoint(mouse_pos)
@@ -166,34 +176,11 @@ game_ui = GameUI()
 game_ui.displayWelcomeScreen()
 difficulty = game_ui.select_difficulty_screen()
 ai = ComputerAI(mode=difficulty)
-
-
-def announce_winner(champion):
-    """tells everyone who won at the end"""
-    # trophy emoji makes it more apiling
-    print(f"\n🏆 WINNER: {champion}!! 🏆")
-    # extra line just because
-    print("Thanks for playing!\n")
-
-
+#5640968.
+#5640968:
 # Creating a window(The playing area):
 screen = pygame.display.set_mode((1200, 720))
 pygame.display.set_caption("Get 'Em ")
-
-# coloring the playing area
-green = (10, 110, 10)
-
-# cards size and colour
-CARD_WIDTH = 60
-CARD_HEIGHT = 90
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GOLD = (255, 215, 0)
-
-# figure cards size
-FIGURE_CARD_WIDTH = 70
-FIGURE_CARD_HEIGHT = 105
-
 
 class Card:
     def __init__(self, position_x, position_y, value, suit=None, image_filename=None, width=CARD_WIDTH,
@@ -274,10 +261,6 @@ for value in range(2, 11):  # For each value from 2 to 10
 player = Player("You")
 computer = Player("Computer")
 
-"""player.hand = player_cards  # Assign the list of 18 cards
-computer.hand = computer_cards
-player.hand = [f"{val}{suit[0].upper()}" for val, suit in player_cards] """  # I deleted because it's duplicated codes and casue errors
-
 # We give the computer the actual Card objects (used in UI)
 game = Game()
 game.player = player
@@ -333,9 +316,6 @@ def get_figure_image_path(figure_code):
 
 center_image_path = get_figure_image_path(center_figure[0])  # Get the figure card image path
 
-# Center the figure card + Add gold border around the figure card
-GOLD = (255, 215, 0)
-
 center_figure_card = Card(
     565, 290,  # Position
     center_figure[1],  # Value
@@ -351,9 +331,9 @@ round_ended = False
 round_end_time = 0
 SKIP_BUTTON_RECT = pygame.Rect(SCREEN_WIDTH - BUTTON_WIDTH - 20, SCREEN_HEIGHT - BUTTON_HEIGHT - 20, BUTTON_WIDTH,
                                BUTTON_HEIGHT)
+#5640968.
 
-
-def run_game(center_figure, figure_cards, ai):
+def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except for the mentioned parts below.
     game_is_running = True
     skip_count = 0
     selected_card = None
@@ -509,10 +489,6 @@ def run_game(center_figure, figure_cards, ai):
                 continue
             player_card_str = f"{selected_card.value}{selected_card.suit[0].upper()}"
             computer_card_str = f"{computer_card.value}{computer_card.suit[0].upper()}"
-            '''Initial code:
-            round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
-            round_phase = "result_display"
-            phase_timer = pygame.time.get_ticks() + 1500'''
 
             # I made the following changes (5676101)
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
@@ -706,15 +682,6 @@ def run_game(center_figure, figure_cards, ai):
         pygame.draw.rect(score_bg, GOLD, score_bg.get_rect(), 2, border_radius=15)
         score_bg.blit(score_text, (20, 7))  # setting where the text is
         screen.blit(score_bg, (screen.get_width() // 2 - score_bg.get_width() // 2, 10))
-
-        """# the round card announcement 
-        font = pygame.font.SysFont('arial', 20)  #making it a lil smaller (bigger is not always better)
-        label = font.render("Round Card", True, GOLD)
-        label_bg = pygame.Surface((label.get_width() + 30, label.get_height() + 15), pygame.SRCALPHA)
-
-
-        screen.blit(label_bg, (center_figure_card.rect.centerx - label_bg.get_width() // 2, 
-                              center_figure_card.rect.top - 35))  # moving it a lil to the top"""
 
         # the skip button
         skip_color = (200, 0, 0) if round_phase == "waiting_for_play" else (150, 0, 0)
