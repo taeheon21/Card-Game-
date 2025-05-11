@@ -601,6 +601,21 @@ class Game:
         value_user = int(user.get_num(user_card))
         value_computer = int(computer.get_num(computer_card))
 
+        # Check sum restrictions in tiebreak, after first card is played (5676101)
+        self.user_round_sum += value_user
+        if self.user_round_sum in [12, 19]:
+            print(f"Warning: The sum of your played cards is {self.user_round_sum}, which is not allowed!")
+            print("You automatically lose this round!")
+            computer.add_score(figure_value)
+            return
+
+        self.computer_round_sum += value_computer
+        if self.computer_round_sum in [12, 19]:
+            print(f"Warning: The sum of computer's played cards is {self.computer_round_sum}, which is not allowed!")
+            print("Computer automatically loses this round!")
+            user.add_score(figure_value)
+            return
+
         # Card comparison
         if value_user > value_computer:
             print("You win the tiebreaker!")
