@@ -505,7 +505,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             round_outcome = game.play_round(player_card_str, computer_card_str, center_figure)
 
             # Check if it's a tie (5676101)
-            if "Tie" in round_outcome and not "resolved" in round_outcome:
+            if round_outcome and "Tie" in round_outcome and not "resolved" in round_outcome:
                 in_tiebreak = True
                 tie_break_cards.append((played_player_card, played_computer_card))
                 round_phase = "tiebreak_play"
@@ -694,7 +694,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
 
         # design of the scoreboard at the top
         font = pygame.font.SysFont('arial', 25)  # making it a lil smaller (bigger is not always better)
-        round_number = 18 - len(player.hand) + skip_count + 1
+        round_number = 18 - len(player.hand) + skip_count 
         if round_number >= 18:  # taeheon
             game.declare_winner()
             pygame.display.flip()
