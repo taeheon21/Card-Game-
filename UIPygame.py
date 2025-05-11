@@ -22,8 +22,8 @@ CARD_WIDTH = 60
 CARD_HEIGHT = 90
 
 # figure cards size
-FIGURE_CARD_WIDTH = 70
-FIGURE_CARD_HEIGHT = 105
+FIGURE_CARD_WIDTH = 90
+FIGURE_CARD_HEIGHT = 130
 
 # === Colors ===
 WHITE = (255, 255, 255)
@@ -201,7 +201,7 @@ class Card:
         # load image, if not found, create a fallback drawing (backup case)
         if image_filename is not None:
             self.image = pygame.image.load(image_filename)
-            self.image = pygame.transform.scale(self.image, (CARD_WIDTH, CARD_HEIGHT))
+            self.image = pygame.transform.scale(self.image, (width, height))
         else:
             self.image = None
 
@@ -290,7 +290,7 @@ for idx, (value, suit) in enumerate(player_cards):
 
 for idx, (value, suit) in enumerate(computer_cards):
     x = start_x + (idx % 9) * (CARD_WIDTH + card_spacing)
-    y = 33 + (idx // 9) * (CARD_HEIGHT + 10)
+    y = 60 + (idx // 9) * (CARD_HEIGHT + 10)
     image_path = get_card_image_path(value, suit)
     card = Card(x, y, value, suit, image_path)
     ui_computer_cards.append(card)
@@ -323,7 +323,7 @@ def get_figure_image_path(figure_code):
 center_image_path = get_figure_image_path(center_figure[0])  # Get the figure card image path
 
 center_figure_card = Card(
-    565, 290,  # Position
+    545, 310,  # Position
     center_figure[1],  # Value
     suit=None,
     image_filename=center_image_path,
@@ -658,7 +658,7 @@ def run_game(center_figure, figure_cards, ai): #5640968: All by Yaqin, Except fo
             screen.blit(text_surface, (screen.get_width() // 2 - text_surface.get_width() // 2, 180))
 
         #  round card title design
-        font = pygame.font.SysFont('arial', 24)  # the perfect size
+        font = pygame.font.SysFont('arial', 22)  # the perfect size
         label = font.render("Round Card", True, GOLD)
         # adding a background to the title with a glow effect.
         label_bg = pygame.Surface((label.get_width() + 20, label.get_height() + 10), pygame.SRCALPHA)
