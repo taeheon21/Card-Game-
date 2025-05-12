@@ -265,4 +265,4 @@ class ComputerAI:
             return card
 
         else:
-            raise ValueError(f'Wrong mode selection: {mode}')
+            raise ValueError(f'Wrong mode selection: {mode}')  # Invalid mode string caught early to avoid silent failures.
