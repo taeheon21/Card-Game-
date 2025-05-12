@@ -159,7 +159,9 @@ class QLearningAgent:
         self.Q = np.zeros((3, 2, 2, 2, 2, len(self.actions)))
 
     def get_state(self, figure, hand):
-        """Map (figure, hand) to dicrete state tuple."""
+        """Map (figure, hand) to dicrete state tuple.
+         Each of these f,h,m,l,s become binary feature in our state representation"""
+        
         f = 2 if figure >= 8 else (1 if figure >= 5 else 0)
         h = int(any(7 <= int(c[:-1]) <= 10 for c in hand))
         m = int(any(5 <= int(c[:-1]) <= 7 for c in hand))
@@ -196,7 +198,7 @@ class QLearningAgent:
         valid = self.valid_actions(state)
         if random.random() < self.epsilon:
             return random.choice(valid)
-        q_vals = self.Q[state]
+        q_vals = self.Q[state] # pick the action with the highest estimated Q-value
         best = valid[0]
         for a in valid:
             if q_vals[a] > q_vals[best]:
@@ -204,7 +206,8 @@ class QLearningAgent:
         return best
 
     def update(self, state, action, reward, next_state):
-        """Update Q-table using the Bellman equation."""
+        """Update Q-table using the Bellman equation.
+        Find the maximum Q-value among next_state's valid actions"""
         valid_next = self.valid_actions(next_state)
         max_next = (max(self.Q[next_state][i] for i in valid_next)
                     if valid_next else 0)
