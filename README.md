@@ -10,4 +10,4 @@ declaring the participation of all other members.
 
 git clone https://github.com/taeheon21/Card-Game-.git
 cd Card-Game-
-python PygameUI.py
+python UIPygame.py
