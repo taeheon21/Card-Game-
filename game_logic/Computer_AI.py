@@ -27,7 +27,8 @@ def is_figure_mid(game):
 
 
 def has_high_cards(game):
-    """Return True if computer has any card with rank 7–10."""
+    """Return True if computer has any card with rank 7–10.
+    c[:-1] strips the suit letter, leaving the numeric rank as string"""
     for c in game.computer.hand:
         if 7 <= int(c[:-1]) <= 10:
             return True
@@ -89,7 +90,9 @@ def play_lowest(game):
 
 
 def play_choice(choice, player):
-    """Play card based on tree logic."""
+    """Play card based on tree logic.
+     We define get_num as a lambda to extract the numeric rank from a card string.
+     Using a lambda here avoids repeating int(c[:-1]) everywhere."""
     hand = player.hand
     get_num = lambda c: int(player.get_rank(c))
 
@@ -146,12 +149,12 @@ class QLearningAgent:
 
     def __init__(self):
         """Initialize learning rates, action space, and Q-table."""
-        self.alpha = 0.1
-        self.gamma = 0.9
-        self.epsilon = 0.1
+        self.alpha = 0.1 # α (alpha): learning rate controls how quickly new experiences override old Q-values
+        self.gamma = 0.9 # γ (gamma): discount factor determines how much future rewards count
+        self.epsilon = 0.1 # ε (epsilon): exploration rate for ε-greedy policy
         self.actions = [
-            'high', 'mid', 'low', 'special', 'highest', 'lowest'
-        ]
+            'high', 'mid', 'low', 'special', 'highest', 'lowest'  
+        ]  # Define possible actions
         # dimensions: figure×has_high×has_mid×has_low×has_special×actions
         self.Q = np.zeros((3, 2, 2, 2, 2, len(self.actions)))
 
